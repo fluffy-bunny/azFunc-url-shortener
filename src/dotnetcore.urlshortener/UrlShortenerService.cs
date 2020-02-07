@@ -22,7 +22,7 @@ namespace dotnetcore.urlshortener
             _eventSource.RemoveListenter(handler);
         }
 
-       
+
         public UrlShortenerService(
             IUrlShortenerOperationalStore urlShortenerOperationalStore,
             IUrlShortenerExpiryOperationalStore urlShortenerExpiryOperationalStore)
@@ -37,7 +37,7 @@ namespace dotnetcore.urlshortener
             var expiredRedirectKey = "0000";
             if (!string.IsNullOrEmpty(shortUrl.ExpiredRedirectKey))
             {
-               
+
                 Guard.ArguementEvalutate(nameof(shortUrl.ExpiredRedirectKey),
                     (() =>
                     {
@@ -62,7 +62,7 @@ namespace dotnetcore.urlshortener
             }
 
             var record = await _urlShortenerOperationalStore.UpsertShortUrlAsync(shortUrl);
-            record.Id = $"{expiredRedirectKey}{record.Id}";
+            record.Id = $"{expiredRedirectKey}.{record.Id}";
             record.ExpiredRedirectKey = expiredRedirectKey;
             _eventSource.FireEvent(new ShortenerEventArgs()
             {
@@ -130,7 +130,7 @@ namespace dotnetcore.urlshortener
 
                     return (true, null);
                 }));
-           
+
             var key = id.Substring(4);
             var original = await _urlShortenerOperationalStore.GetShortUrlAsync(key);
             if (original != null)
