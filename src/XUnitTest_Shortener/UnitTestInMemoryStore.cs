@@ -1,4 +1,6 @@
-﻿using dotnetcore.urlshortener.contracts;
+﻿using CosmosDB.Simple.Store.Interfaces;
+using dotnetcore.urlshortener.contracts;
+using dotnetcore.urlshortener.contracts.Models;
 using dotnetcore.urlshortener.generator;
 using FluentAssertions;
 using System;
@@ -29,6 +31,14 @@ namespace XUnitTest_Shortener
         public UnitTestInMemoryStore(MyTestServerFixture fixture)
         {
             _fixture = fixture;
+
+        }
+
+        [Fact]
+        public async Task TestMethod_CosmosDB_Short()
+        {
+            var store = _fixture.GetService<ISimpleItemDbContext<ShortUrlCosmosDocument>>();
+            store.Should().NotBeNull();
 
         }
         [Fact]

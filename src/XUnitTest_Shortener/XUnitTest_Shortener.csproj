@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\dotnetcore.Simple.CosmosDB\dotnetcore.Simple.CosmosDB.csproj" />
     <ProjectReference Include="..\dotnetcore.urlshortener.generator\dotnetcore.urlshortener.generator.csproj" />
     <ProjectReference Include="..\TestServerFixture\TestServerFixture.csproj" />
     <ProjectReference Include="..\UrlShortenerApp\UrlShortenerApp.csproj" />
