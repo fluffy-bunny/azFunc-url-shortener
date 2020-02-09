@@ -1,12 +1,7 @@
-﻿using System.Threading.Tasks;
-
-namespace dotnetcore.urlshortener.contracts
+﻿namespace dotnetcore.urlshortener.contracts
 {
-    public interface IUrlShortenerOperationalStore
+    public interface IUrlShortenerOperationalStore: IUrlShortenerOperationalStoreBase
     {
-        Task<ShortUrl> UpsertShortUrlAsync(ShortUrl shortUrl);
-        Task<ShortUrl> GetShortUrlAsync(string id);
-        Task RemoveShortUrlAsync(string id);
     }
 
 }

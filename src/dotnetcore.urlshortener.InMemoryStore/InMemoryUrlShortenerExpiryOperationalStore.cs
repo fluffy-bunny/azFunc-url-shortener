@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace dotnetcore.urlshortener.InMemoryStore
 {
-    public class InMemoryUrlShortenerExpiryOperationalStore : IUrlShortenerExpiryOperationalStore
+    public class InMemoryUrlShortenerExpiryOperationalStore : IExpiredUrlShortenerOperationalStore
     {
         private Dictionary<string, ExpirationRedirectRecord> _database;
        private string DefaultExpiredRedirectKey { get; set; }
@@ -37,6 +37,21 @@ namespace dotnetcore.urlshortener.InMemoryStore
                 return _database[DefaultExpiredRedirectKey];
             }
             return null;
+        }
+
+        public Task<ShortUrl> UpsertShortUrlAsync(ShortUrl shortUrl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ShortUrl> GetShortUrlAsync(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveShortUrlAsync(string id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

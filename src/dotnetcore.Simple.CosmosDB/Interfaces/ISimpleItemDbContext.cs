@@ -12,9 +12,9 @@ namespace CosmosDB.Simple.Store.Interfaces
     {
         Task<T> GetItemAsync(string id);
         Task<IEnumerable<T>> GetItemsAsync(Expression<Func<T, bool>> predicate);
-        Task<Document> CreateItemAsync(T item);
+        Task<Document> UpsertItemAsync(T item);
 
-        Task<Document> UpdateItemAsync(string id, T item);
+        Task<Document> ReplaceItemAsync(string id, T item);
         Task DeleteItemAsync(string id);
     }
 }

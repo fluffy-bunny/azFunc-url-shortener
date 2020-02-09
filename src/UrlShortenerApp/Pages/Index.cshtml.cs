@@ -45,11 +45,10 @@ namespace UrlShortenerApp.Pages
             var shortUrl = new ShortUrl
             {
                 LongUrl = LongUrl,
-                Exiration = DateTime.UtcNow.AddMinutes(2),
-                ExpiredRedirectKey = "0001"
+                Expiration = DateTime.UtcNow.AddMinutes(2)
             };
 
-            shortUrl = await _urlShortenerService.UpsertShortUrlAsync(shortUrl);
+            shortUrl = await _urlShortenerService.UpsertShortUrlAsync("1",shortUrl);
 
             this.ShortUrl = $"{Request.Scheme}://{Request.Host}/s/{shortUrl.Id}";
 

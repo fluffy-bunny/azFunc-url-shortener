@@ -15,7 +15,7 @@ namespace dotnetcore.urlshortener.generator
 
     public class GuidUrlShortenerAlgorithm : IUrlShortenerAlgorithm
     {
-        static string ToBase62(BigInteger number)
+        public static string ToBase62(BigInteger number)
         {
             var alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             var n = number;
@@ -34,7 +34,7 @@ namespace dotnetcore.urlshortener.generator
             return ret;
         }
 
-        static string ToBase62(ulong number)
+        public static string ToBase62(ulong number)
         {
             var alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             var n = number;

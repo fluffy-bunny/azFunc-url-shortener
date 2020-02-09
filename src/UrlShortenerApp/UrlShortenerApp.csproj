@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\dotnetcore.urlshortener.contracts\dotnetcore.urlshortener.contracts.csproj" />
+    <ProjectReference Include="..\dotnetcore.urlshortener.CosmosDBStore\dotnetcore.urlshortener.CosmosDBStore.csproj" />
     <ProjectReference Include="..\dotnetcore.urlshortener.generator\dotnetcore.urlshortener.generator.csproj" />
     <ProjectReference Include="..\dotnetcore.urlshortener.InMemoryStore\dotnetcore.urlshortener.InMemoryStore.csproj" />
     <ProjectReference Include="..\dotnetcore.urlshortener\dotnetcore.urlshortener.csproj" />

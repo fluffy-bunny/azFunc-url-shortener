@@ -2,10 +2,11 @@
 
 namespace dotnetcore.urlshortener.contracts
 {
-    public interface IUrlShortenerService : IUrlShortenerEventSource<ShortenerEventArgs>
+    public interface IUrlShortenerOperationalStoreBase
     {
-        Task<ShortUrl> UpsertShortUrlAsync(string expiredKey, ShortUrl shortUrl);
+        Task<ShortUrl> UpsertShortUrlAsync(ShortUrl shortUrl);
         Task<ShortUrl> GetShortUrlAsync(string id);
         Task RemoveShortUrlAsync(string id);
     }
+
 }

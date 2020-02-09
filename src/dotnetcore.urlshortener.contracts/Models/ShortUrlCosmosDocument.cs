@@ -7,52 +7,72 @@ namespace dotnetcore.urlshortener.contracts.Models
 {
     public static class ShortUrlExtensions
     {
-        public static ShortUrlCosmosDocument ToShortUrlCosmosDocument(this ShortUrl shortUrl)
+        public static ShortUrl ToShortUrl(this ShortUrlCosmosDocumentBase document)
+        {
+            if (document == null)
+            {
+                return null;
+            }
+            var shortUrl = new ShortUrl
+            {
+                Expiration = document.Expiration,
+                Id = document.Id,
+                LongUrl = document.LongUrl 
+            };
+            return shortUrl;
+        }
+        public static ShortUrlCosmosDocumentBase ToShortUrlCosmosDocument(this ShortUrl shortUrl)   
         {
             int? ttl = null;
-            if (shortUrl.Exiration != null)
+            if (shortUrl.Expiration != null)
             {
-                var diffInSeconds = (int)(((DateTime)shortUrl.Exiration - DateTime.UtcNow).TotalSeconds);
+                var diffInSeconds = (int)(((DateTime)shortUrl.Expiration - DateTime.UtcNow).TotalSeconds);
                 if (diffInSeconds <= 0)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(shortUrl.Exiration));
+                    throw new ArgumentOutOfRangeException(nameof(shortUrl.Expiration));
                 }
                 ttl = diffInSeconds;
             }
 
-
-
-            return new ShortUrlCosmosDocument
+            return new ShortUrlCosmosDocumentBase
             {
                 Id = shortUrl.Id,
-                ExpiredRedirectKey = shortUrl.ExpiredRedirectKey,
                 LongUrl = shortUrl.LongUrl,
-                LongUrlType = shortUrl.LongUrlType,
-                Expiration = shortUrl.Exiration,
+                Expiration = shortUrl.Expiration,
                 ttl = ttl
             };
         }
     }
 
-    public class ShortUrlCosmosDocument
+    public class ShortUrlCosmosDocumentBase
     {
+        public ShortUrlCosmosDocumentBase() { }
+        public ShortUrlCosmosDocumentBase(ShortUrlCosmosDocumentBase other) {
+            Id = other.Id;
+            LongUrl = other.LongUrl;
+            Expiration = other.Expiration;
+            ttl = other.ttl;
+        }
+
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
-        [JsonProperty(PropertyName = "expiredRedirectKey")]
-        public string ExpiredRedirectKey { get; set; }
-
         [JsonProperty(PropertyName = "longUrl")]
         public string LongUrl { get; set; }
-
-        [JsonProperty(PropertyName = "longUrlType")]
-        public LongUrlType LongUrlType { get; set; }
 
         [JsonProperty(PropertyName = "expiration")]
         public DateTime? Expiration { get; set; }
 
         [JsonProperty(PropertyName = "ttl", NullValueHandling = NullValueHandling.Ignore)]
         public int? ttl { get; set; }
+    }
+    public class ShortUrlCosmosDocument: ShortUrlCosmosDocumentBase {
+        public ShortUrlCosmosDocument() { }
+        public ShortUrlCosmosDocument(ShortUrlCosmosDocumentBase other) : base(other) { }
+    }
+    public class ExpiredShortUrlCosmosDocument : ShortUrlCosmosDocumentBase {
+        public ExpiredShortUrlCosmosDocument() { }
+        public ExpiredShortUrlCosmosDocument(ShortUrlCosmosDocumentBase other) : base(other) { }
     }
 }
 

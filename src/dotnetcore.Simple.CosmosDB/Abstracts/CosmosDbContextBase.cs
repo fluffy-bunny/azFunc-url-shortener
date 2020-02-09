@@ -17,12 +17,13 @@ namespace CosmosDB.Simple.Store.Abstracts
     /// <summary>
     ///     Base class for Context that uses CosmosDb.
     /// </summary>
-    public abstract class CosmosDbContextBase : IDisposable
+    public abstract class CosmosDbContextBase<T> : IDisposable
+        where T:class
     {
         /// <summary>
         ///     CosmosDb Configuration Data
         /// </summary>
-        protected readonly CosmosDbConfiguration Configuration;
+        protected readonly CosmosDbConfiguration<T> Configuration;
 
         /// <summary>
         ///     Logger
@@ -36,7 +37,7 @@ namespace CosmosDB.Simple.Store.Abstracts
         /// <param name="connectionPolicy"></param>
         /// <param name="logger"></param>
         protected CosmosDbContextBase(
-            IOptions<CosmosDbConfiguration> settings,
+            IOptions<CosmosDbConfiguration<T>> settings,
             ConnectionPolicy connectionPolicy = null,
             ILogger logger = null)
         {

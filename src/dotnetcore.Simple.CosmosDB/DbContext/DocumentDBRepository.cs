@@ -14,13 +14,13 @@ using Microsoft.Extensions.Options;
 
 namespace CosmosDB.Simple.Store.DbContext
 {
-    public class DocumentDBRepository<T> : CosmosDbContextBase, ISimpleItemDbContext<T> where T : class
+    public class DocumentDBRepository<T> : CosmosDbContextBase<T>, ISimpleItemDbContext<T> where T : class
     {
 
         private Uri _documentCollectionUri;
 
         public DocumentDBRepository(
-            IOptions<CosmosDbConfiguration> settings,
+            IOptions<CosmosDbConfiguration<T>> settings,
             ConnectionPolicy connectionPolicy = null,
             ILogger<DocumentDBRepository<T>> logger = null) :
             base(settings, connectionPolicy, logger)
@@ -74,12 +74,12 @@ namespace CosmosDB.Simple.Store.DbContext
             return results;
         }
 
-        public async Task<Document> CreateItemAsync(T item)
+        public async Task<Document> UpsertItemAsync(T item)
         {
-            return await DocumentClient.CreateDocumentAsync(_documentCollectionUri, item);
+            return await DocumentClient.UpsertDocumentAsync(_documentCollectionUri, item);
         }
 
-        public async Task<Document> UpdateItemAsync(string id, T item)
+        public async Task<Document> ReplaceItemAsync(string id, T item)
         {
             return await DocumentClient.ReplaceDocumentAsync(_documentCollectionUri, item);
         }

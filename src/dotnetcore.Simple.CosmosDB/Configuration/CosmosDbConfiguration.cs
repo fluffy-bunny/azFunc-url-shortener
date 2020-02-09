@@ -5,7 +5,8 @@ namespace CosmosDB.Simple.Store.Configuration
     /// <summary>
     ///     AppSettings CosmosDb Configuration Section.
     /// </summary>
-    public class CosmosDbConfiguration
+    public class CosmosDbConfiguration<T>
+        where T: class
     {
         /// <summary>
         ///     URL EndPoint for CosmosDb Instance.

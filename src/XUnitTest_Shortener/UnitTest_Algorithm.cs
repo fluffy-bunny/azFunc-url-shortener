@@ -23,5 +23,18 @@ namespace XUnitTest_Shortener
             var d = keys[0];
 
         }
+        [Fact]
+        public void Test2()
+        {
+            List<string> keys = new List<string>();
+            for (int i = 0; i < 100; i++)
+            {
+                var key = GuidUrlShortenerAlgorithm.ToBase62(i); 
+                keys.Add(key);
+            }
+            var d = keys[0];
+
+           
+        }
     }
 }

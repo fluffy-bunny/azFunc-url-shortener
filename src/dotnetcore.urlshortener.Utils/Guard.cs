@@ -6,7 +6,7 @@ namespace dotnetcore.urlshortener.Utils
     public static class Guard
     {
 
-        public static void ArguementEvalutate(string argumentName, Func<(bool success,string message)> condition)
+        public static void ArguementEvaluate(string argumentName, Func<(bool success,string message)> condition)
         {
             var eval = condition.Invoke();
             if (!eval.success)

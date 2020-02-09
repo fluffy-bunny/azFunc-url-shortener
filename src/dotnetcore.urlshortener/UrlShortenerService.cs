@@ -10,14 +10,16 @@ namespace dotnetcore.urlshortener
     {
         private EventSource<ShortenerEventArgs> _eventSource;
         private IUrlShortenerOperationalStore _urlShortenerOperationalStore;
-        private IUrlShortenerExpiryOperationalStore _urlShortenerExpiryOperationalStore;
+        private IExpiredUrlShortenerOperationalStore _expiredUrlShortenerOperationalStore;
 
-        void IUrlShortenerEventSource<ShortenerEventArgs>.AddListenter(EventHandler<ShortenerEventArgs> handler)
+        void IUrlShortenerEventSource<ShortenerEventArgs>.AddListenter(
+            EventHandler<ShortenerEventArgs> handler)
         {
             _eventSource.AddListenter(handler);
         }
 
-        void IUrlShortenerEventSource<ShortenerEventArgs>.RemoveListenter(EventHandler<ShortenerEventArgs> handler)
+        void IUrlShortenerEventSource<ShortenerEventArgs>.RemoveListenter(
+            EventHandler<ShortenerEventArgs> handler)
         {
             _eventSource.RemoveListenter(handler);
         }
@@ -25,45 +27,20 @@ namespace dotnetcore.urlshortener
 
         public UrlShortenerService(
             IUrlShortenerOperationalStore urlShortenerOperationalStore,
-            IUrlShortenerExpiryOperationalStore urlShortenerExpiryOperationalStore)
+            IExpiredUrlShortenerOperationalStore expiredUrlShortenerOperationalStore)
         {
             _urlShortenerOperationalStore = urlShortenerOperationalStore;
-            _urlShortenerExpiryOperationalStore = urlShortenerExpiryOperationalStore;
+            _expiredUrlShortenerOperationalStore = expiredUrlShortenerOperationalStore;
             _eventSource = new EventSource<ShortenerEventArgs>();
         }
-        public async Task<ShortUrl> UpsertShortUrlAsync(ShortUrl shortUrl)
+        public async Task<ShortUrl> UpsertShortUrlAsync(string expiredKey, ShortUrl shortUrl)
         {
             Guard.ArgumentNotNull(nameof(shortUrl), shortUrl);
-            var expiredRedirectKey = "0000";
-            if (!string.IsNullOrEmpty(shortUrl.ExpiredRedirectKey))
-            {
-
-                Guard.ArguementEvalutate(nameof(shortUrl.ExpiredRedirectKey),
-                    (() =>
-                    {
-                        if (shortUrl.ExpiredRedirectKey.Length != 4)
-                        {
-                            return (false, "The value must be exactly 4 in length");
-                        }
-
-                        return (true, null);
-                    }));
-                Guard.ArguementEvalutate(nameof(shortUrl.ExpiredRedirectKey),
-                    (() =>
-                    {
-                        Regex r = new Regex("^[a-zA-Z0-9]*$");
-                        if (!r.IsMatch(shortUrl.ExpiredRedirectKey))
-                        {
-                            return (false, "The value must be an alphanumeric");
-                        }
-                        return (true, null);
-                    }));
-                expiredRedirectKey = shortUrl.ExpiredRedirectKey;
-            }
+            Guard.ArgumentNotNull(nameof(expiredKey), expiredKey);
 
             var record = await _urlShortenerOperationalStore.UpsertShortUrlAsync(shortUrl);
-            record.Id = $"{expiredRedirectKey}.{record.Id}";
-            record.ExpiredRedirectKey = expiredRedirectKey;
+            record.Id = $"{expiredKey}.{record.Id}";
+
             _eventSource.FireEvent(new ShortenerEventArgs()
             {
                 ShortUrl = record,
@@ -75,7 +52,7 @@ namespace dotnetcore.urlshortener
 
         public async Task<ShortUrl> GetShortUrlAsync(string id)
         {
-            Guard.ArguementEvalutate(nameof(id),
+            Guard.ArguementEvaluate(nameof(id),
                 (() =>
                 {
                     if (id.Length <= 4)
@@ -85,8 +62,10 @@ namespace dotnetcore.urlshortener
 
                     return (true, null);
                 }));
-            var expireRedirectKey = id.Substring(0, 4);
-            var key = id.Substring(4);
+            var keys = id.Split('.');
+
+            var expiredKey = keys[0];
+            var key = keys[1];
             var record = await _urlShortenerOperationalStore.GetShortUrlAsync(key);
             if (record != null)
             {
@@ -99,14 +78,8 @@ namespace dotnetcore.urlshortener
                 return record;
             }
 
-            var expirationRedirectRecord = await _urlShortenerExpiryOperationalStore.GetExpirationRedirectRecordAsync(expireRedirectKey);
-            record = new ShortUrl
-            {
-                LongUrlType = LongUrlType.ExpiryRedirect,
-                LongUrl = expirationRedirectRecord.ExpiredRedirectUrl,
-                Id = id,
-                ExpiredRedirectKey = expireRedirectKey
-            };
+            record = await _expiredUrlShortenerOperationalStore.GetShortUrlAsync(expiredKey);
+           
             _eventSource.FireEvent(new ShortenerEventArgs()
             {
                 ShortUrl = record,
@@ -120,7 +93,7 @@ namespace dotnetcore.urlshortener
 
         public async Task RemoveShortUrlAsync(string id)
         {
-            Guard.ArguementEvalutate(nameof(id),
+            Guard.ArguementEvaluate(nameof(id),
                 (() =>
                 {
                     if (id.Length <= 4)

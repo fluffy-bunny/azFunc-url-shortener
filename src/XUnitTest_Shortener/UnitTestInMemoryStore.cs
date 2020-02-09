@@ -23,7 +23,6 @@ namespace XUnitTest_Shortener
             Evt = e;
         }
     }
-
     public class UnitTestInMemoryStore : IClassFixture<MyTestServerFixture>
     {
         private MyTestServerFixture _fixture;
@@ -31,7 +30,6 @@ namespace XUnitTest_Shortener
         public UnitTestInMemoryStore(MyTestServerFixture fixture)
         {
             _fixture = fixture;
-
         }
 
         [Fact]
@@ -51,10 +49,10 @@ namespace XUnitTest_Shortener
             ShortenerEventArgs evt = null;
             var myHandler = new MyHandler();
             store.AddListenter(myHandler.OnEvent);
-            var shortUrl = await store.UpsertShortUrlAsync(new ShortUrl()
+            var shortUrl = await store.UpsertShortUrlAsync("1",new ShortUrl()
             {
                 LongUrl = url,
-                Exiration = DateTime.UtcNow.AddDays(1)
+                Expiration = DateTime.UtcNow.AddSeconds(2)
 
             });
 
@@ -72,6 +70,8 @@ namespace XUnitTest_Shortener
 
             var lookup = await store.GetShortUrlAsync(shortUrl.Id);
             myHandler.Evt.Should().BeNull();
+
+ 
         }
     }
 }
