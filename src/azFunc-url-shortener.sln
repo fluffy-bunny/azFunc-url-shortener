@@ -27,6 +27,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnetcore.Simple.CosmosDB"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnetcore.urlshortener.CosmosDBStore", "dotnetcore.urlshortener.CosmosDBStore\dotnetcore.urlshortener.CosmosDBStore.csproj", "{DF0936BF-D104-4275-8353-04234162F244}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{798F0471-F1B7-4303-877E-D24F9B21C3AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webApp-urlshortener", "webApp-urlshortener\webApp-urlshortener.csproj", "{EC7EC9A3-A586-4072-900A-65AA32419775}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "azFunc-urlshortener", "azFunc-urlshortener\azFunc-urlshortener.csproj", "{48E1FF6C-930C-4A67-9929-65FE357CFA1A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +83,14 @@ Global
 		{DF0936BF-D104-4275-8353-04234162F244}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF0936BF-D104-4275-8353-04234162F244}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF0936BF-D104-4275-8353-04234162F244}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC7EC9A3-A586-4072-900A-65AA32419775}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC7EC9A3-A586-4072-900A-65AA32419775}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC7EC9A3-A586-4072-900A-65AA32419775}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC7EC9A3-A586-4072-900A-65AA32419775}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48E1FF6C-930C-4A67-9929-65FE357CFA1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48E1FF6C-930C-4A67-9929-65FE357CFA1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48E1FF6C-930C-4A67-9929-65FE357CFA1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48E1FF6C-930C-4A67-9929-65FE357CFA1A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +99,8 @@ Global
 		{D5FB078B-C51B-4372-B446-851F904CA09E} = {C42ABF34-340B-43A7-B32B-C55F86CDA134}
 		{84A8D2F8-6464-4E33-87FE-6BE5529255EE} = {C42ABF34-340B-43A7-B32B-C55F86CDA134}
 		{2E21EABF-0A23-408A-BE11-B5EEC712EF49} = {C42ABF34-340B-43A7-B32B-C55F86CDA134}
+		{EC7EC9A3-A586-4072-900A-65AA32419775} = {798F0471-F1B7-4303-877E-D24F9B21C3AA}
+		{48E1FF6C-930C-4A67-9929-65FE357CFA1A} = {798F0471-F1B7-4303-877E-D24F9B21C3AA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F361EDA6-E6D5-4027-9D15-E929594D52C7}
