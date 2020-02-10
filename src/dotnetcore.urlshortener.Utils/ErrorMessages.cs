@@ -1,4 +1,4 @@
-﻿namespace CosmosDB.Simple.Store
+﻿namespace dotnetcore.urlshortener.Utils
 {
     /// <summary>
     ///     Static/Constant Error Messages.

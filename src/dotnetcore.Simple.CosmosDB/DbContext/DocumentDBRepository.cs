@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CosmosDB.Simple.Store.Abstracts;
 using CosmosDB.Simple.Store.Configuration;
 using CosmosDB.Simple.Store.Interfaces;
+using dotnetcore.urlshortener.Utils;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -86,7 +87,12 @@ namespace CosmosDB.Simple.Store.DbContext
 
         public async Task DeleteItemAsync(string id)
         {
-            await DocumentClient.DeleteDocumentAsync(_documentCollectionUri);
+            var item = DocumentClient.CreateDocumentQuery(_documentCollectionUri)
+                    .Where(d => d.Id == id)
+                    .AsEnumerable()
+                    .FirstOrDefault();
+
+            await DocumentClient.DeleteDocumentAsync(item.SelfLink);
         }
 
         private async Task CreateCollectionIfNotExistsAsync()

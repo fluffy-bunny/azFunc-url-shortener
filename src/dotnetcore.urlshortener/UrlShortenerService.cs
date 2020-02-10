@@ -79,7 +79,7 @@ namespace dotnetcore.urlshortener
             }
 
             record = await _expiredUrlShortenerOperationalStore.GetShortUrlAsync(expiredKey);
-           
+
             _eventSource.FireEvent(new ShortenerEventArgs()
             {
                 ShortUrl = record,
@@ -103,8 +103,11 @@ namespace dotnetcore.urlshortener
 
                     return (true, null);
                 }));
+            var keys = id.Split('.');
 
-            var key = id.Substring(4);
+            var expiredKey = keys[0];
+            var key = keys[1];
+
             var original = await _urlShortenerOperationalStore.GetShortUrlAsync(key);
             if (original != null)
             {

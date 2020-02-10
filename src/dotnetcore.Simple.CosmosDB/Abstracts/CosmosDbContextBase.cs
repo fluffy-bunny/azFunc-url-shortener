@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CosmosDB.Simple.Store.Configuration;
 using CosmosDB.Simple.Store.Extensions;
+using dotnetcore.urlshortener.Utils;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,7 @@ namespace CosmosDB.Simple.Store.Abstracts
     ///     Base class for Context that uses CosmosDb.
     /// </summary>
     public abstract class CosmosDbContextBase<T> : IDisposable
-        where T:class
+        where T : class
     {
         /// <summary>
         ///     CosmosDb Configuration Data
@@ -87,7 +88,7 @@ namespace CosmosDB.Simple.Store.Abstracts
         protected int GetRUsFor(CollectionName collection)
         {
             return Configuration.Collection?.ReserveUnits
-                   ?? Constants.DefaultReserveUnits;
+                   ?? dotnetcore.urlshortener.Utils.Constants.DefaultReserveUnits;
         }
 
         private async Task EnsureDatabaseCreated(string databaseName)
