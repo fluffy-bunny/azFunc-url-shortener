@@ -23,19 +23,18 @@ namespace webApp_urlshortener
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+        private IWebHostEnvironment _env;
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             _env = env;
         }
 
-        public IConfiguration Configuration { get; }
-
-        private IWebHostEnvironment _env;
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.AddControllers();
             services.AddUrlShortenerService();
             services.AddGuidUrlShortenerAlgorithm();
@@ -44,14 +43,12 @@ namespace webApp_urlshortener
             services.AddCosmosDBUrlShortenerOperationalStore();
 
             // wellknown CosmosDB emulator for local development
-            string primaryKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
-            string cosmosEndpointUri = "https://localhost:8081";
-            if (!_env.IsDevelopment())
-            {
-                // this sould be keyVault references in your application settings on azure
-                primaryKey = Environment.GetEnvironmentVariable("azFunc-shorturl-cosmos-primarykey");
-                cosmosEndpointUri = Environment.GetEnvironmentVariable("azFunc-shorturl-cosmos-uri");
-            }
+
+            string primaryKey = Environment.GetEnvironmentVariable("azFunc-shorturl-cosmos-primarykey");
+            string cosmosEndpointUri = Environment.GetEnvironmentVariable("azFunc-shorturl-cosmos-uri");
+            primaryKey = primaryKey ?? "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
+            cosmosEndpointUri = cosmosEndpointUri ?? "https://localhost:8081";
+
 
             services.AddSimpleItemStore<ShortUrlCosmosDocument>(options =>
             {
