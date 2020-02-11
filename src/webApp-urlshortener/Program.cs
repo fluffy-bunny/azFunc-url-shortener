@@ -18,9 +18,23 @@ namespace webApp_urlshortener
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    var environmentName = hostingContext.HostingEnvironment.EnvironmentName;
+                    LoadConfigurations(config, environmentName);
+                    config.AddEnvironmentVariables();
+                    config.AddUserSecrets<Startup>();
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        public static void LoadConfigurations(IConfigurationBuilder config, string environmentName)
+        {
+            config
+                .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true);
+        }
     }
 }

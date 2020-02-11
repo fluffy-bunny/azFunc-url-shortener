@@ -42,33 +42,42 @@ namespace webApp_urlshortener
 
             // services.AddInMemoryUrlShortenerOperationalStore();
             services.AddCosmosDBUrlShortenerOperationalStore();
-            if (_env.IsDevelopment())
+
+            // wellknown CosmosDB emulator for local development
+            string primaryKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
+            string cosmosEndpointUri = "https://localhost:8081";
+            if (!_env.IsDevelopment())
             {
-                services.AddSimpleItemStore<ShortUrlCosmosDocument>(options =>
-                {
-                    options.EndPointUrl = "https://localhost:8081";
-                    options.PrimaryKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
-                    options.DatabaseName = "ShortUrlDatabase";
-                    options.Collection = new Collection()
-                    {
-                        CollectionName = "ShortUrl",
-                        ReserveUnits = 400
-                    };
-
-                });
-                services.AddSimpleItemStore<ExpiredShortUrlCosmosDocument>(options =>
-                {
-                    options.EndPointUrl = "https://localhost:8081";
-                    options.PrimaryKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
-                    options.DatabaseName = "ShortUrlDatabase";
-                    options.Collection = new Collection()
-                    {
-                        CollectionName = "ExpiredShortUrl",
-                        ReserveUnits = 400
-                    };
-
-                });
+                // this sould be keyVault references in your application settings on azure
+                primaryKey = Environment.GetEnvironmentVariable("azFunc-shorturl-cosmos-primarykey");
+                cosmosEndpointUri = Environment.GetEnvironmentVariable("azFunc-shorturl-cosmos-uri");
             }
+
+            services.AddSimpleItemStore<ShortUrlCosmosDocument>(options =>
+            {
+                options.EndPointUrl = cosmosEndpointUri;
+                options.PrimaryKey = primaryKey;
+                options.DatabaseName = "ShortUrlDatabase";
+                options.Collection = new Collection()
+                {
+                    CollectionName = "ShortUrl",
+                    ReserveUnits = 400
+                };
+
+            });
+            services.AddSimpleItemStore<ExpiredShortUrlCosmosDocument>(options =>
+            {
+                options.EndPointUrl = cosmosEndpointUri;
+                options.PrimaryKey = primaryKey;
+                options.DatabaseName = "ShortUrlDatabase";
+                options.Collection = new Collection()
+                {
+                    CollectionName = "ExpiredShortUrl",
+                    ReserveUnits = 400
+                };
+
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
