@@ -23,7 +23,13 @@ namespace dotnetcore.urlshortener.Utils
                 throw new ArgumentNullException(argumentName);
             }
         }
-
+        public static void NotNull(string argumentName, object value)
+        {
+            if (value == null)
+            {
+                throw new NullReferenceException(argumentName);
+            }
+        }
         public static void ArgumentNotNullOrEmpty(string argumentName, string value)
         {
             if (value == null)

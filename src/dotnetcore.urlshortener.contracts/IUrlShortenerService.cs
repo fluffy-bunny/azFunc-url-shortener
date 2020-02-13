@@ -7,5 +7,7 @@ namespace dotnetcore.urlshortener.contracts
         Task<ShortUrl> UpsertShortUrlAsync(string expiredKey, ShortUrl shortUrl);
         Task<ShortUrl> GetShortUrlAsync(string id);
         Task RemoveShortUrlAsync(string id);
+        Task<ShortUrl> GetShortUrlAsync(string id, string tenant);
+        Task RemoveShortUrlAsync(string id, string tenant);
     }
 }

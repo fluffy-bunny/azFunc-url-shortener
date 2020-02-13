@@ -18,6 +18,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using webApp_urlshortener.Models.jwt_validation;
 
 namespace webApp_urlshortener
 {
@@ -36,6 +39,17 @@ namespace webApp_urlshortener
         {
 
             services.AddControllers();
+            var jwt_validate_settings = Configuration["jwt-validate-settings"];
+            var authenictation = JsonConvert.DeserializeObject<Authentication>(jwt_validate_settings);
+            var tok = authenictation.ToTokenValidationParameters();
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = authenictation.JwtValidation.Authority;
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = tok;
+                });
+
             services.AddUrlShortenerService();
             services.AddGuidUrlShortenerAlgorithm();
 
@@ -91,6 +105,7 @@ namespace webApp_urlshortener
                 var su = expiredUrlShortenerOperationalStore.UpsertShortUrlAsync(new ShortUrl
                 {
                     Id = record.ExpiredRedirectKey,
+                    Tenant = record.Tenant,
                     LongUrl = record.ExpiredRedirectUrl,
                     Expiration = DateTime.UtcNow.AddYears(10)
                 }).GetAwaiter().GetResult();
@@ -102,10 +117,10 @@ namespace webApp_urlshortener
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

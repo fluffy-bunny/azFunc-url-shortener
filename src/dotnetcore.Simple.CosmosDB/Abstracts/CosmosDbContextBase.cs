@@ -59,7 +59,7 @@ namespace CosmosDB.Simple.Store.Abstracts
         /// <summary>
         ///     CosmosDb Document Client.
         /// </summary>
-        protected DocumentClient DocumentClient { get; }
+        public DocumentClient DocumentClient { get; }
 
         /// <summary>
         ///     Instance of CosmosDb Database.

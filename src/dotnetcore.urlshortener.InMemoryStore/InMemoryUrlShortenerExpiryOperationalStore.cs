@@ -9,13 +9,13 @@ namespace dotnetcore.urlshortener.InMemoryStore
     public class InMemoryUrlShortenerExpiryOperationalStore : IExpiredUrlShortenerOperationalStore
     {
         private Dictionary<string, ExpirationRedirectRecord> _database;
-       private string DefaultExpiredRedirectKey { get; set; }
-        public InMemoryUrlShortenerExpiryOperationalStore(IConfiguration configuration )
+        private string DefaultExpiredRedirectKey { get; set; }
+        public InMemoryUrlShortenerExpiryOperationalStore(IConfiguration configuration)
         {
             _database = new Dictionary<string, ExpirationRedirectRecord>();
             var section = configuration.GetSection("InMemoryUrlShortenerExpiryOperationalStore");
             var model = new InMemoryUrlShortenerConfigurationModel();
-           
+
             section.Bind(model);
 
             foreach (var record in model.Records)
@@ -50,6 +50,16 @@ namespace dotnetcore.urlshortener.InMemoryStore
         }
 
         public Task RemoveShortUrlAsync(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ShortUrl> GetShortUrlAsync(string id, string tenant)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveShortUrlAsync(string id, string tenant)
         {
             throw new NotImplementedException();
         }

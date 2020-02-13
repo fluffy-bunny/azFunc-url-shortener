@@ -3,22 +3,24 @@ using System.Threading.Tasks;
 using dotnetcore.urlshortener.contracts;
 using dotnetcore.urlshortener.Utils;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using webApp_urlshortener.Extensions;
+using System.Linq;
 
 namespace webApp_urlshortener.Controllers
 {
     public class ShortUrlRequest
     {
         public int? ttl { get; set; }
-
         public string LongUrl { get; set; }
         public string ExpiredKey { get; set; }
     }
 
     [ApiController]
     [Route("short-url-service")]
+    [Authorize]
     public class ShortUrlController : ControllerBase
     {
         private readonly IUrlShortenerService _urlShortenerService;
@@ -31,13 +33,26 @@ namespace webApp_urlshortener.Controllers
             _urlShortenerService = urlShortenerService;
             _logger = logger;
         }
+        string FetchTenantFromUser()
+        {
+            var tenant = (from c in User.Claims
+                          where c.Type == "url-shortener-tenant"
+                          select c).FirstOrDefault();
+            if (tenant == null || string.IsNullOrWhiteSpace(tenant.Value))
+            {
+                throw new Exception($"url-shortener-tenant claim is invalid");
+            }
+            return tenant.Value;
+        }
+
         [HttpDelete]
         public async Task<IActionResult> DeleteRecord(string key)
         {
             try
             {
                 Guard.ArgumentNotNullOrEmpty(nameof(key), key);
-                await _urlShortenerService.RemoveShortUrlAsync(key);
+                var tenant = FetchTenantFromUser();
+                await _urlShortenerService.RemoveShortUrlAsync(key, tenant);
 
                 var jsonResult = new JsonResult("deleted")
                 {
@@ -59,7 +74,8 @@ namespace webApp_urlshortener.Controllers
             try
             {
                 Guard.ArgumentNotNullOrEmpty(nameof(key), key);
-                var record = await _urlShortenerService.GetShortUrlAsync(key);
+                var tenant = FetchTenantFromUser();
+                var record = await _urlShortenerService.GetShortUrlAsync(key, tenant);
                 if (record == null)
                 {
                     return new NotFoundObjectResult(key);
@@ -86,6 +102,9 @@ namespace webApp_urlshortener.Controllers
                 Guard.ArgumentNotNullOrEmpty(nameof(shortUrlRequest.LongUrl), shortUrlRequest.LongUrl);
                 Guard.ArgumentNotNullOrEmpty(nameof(shortUrlRequest.ExpiredKey), shortUrlRequest.ExpiredKey);
                 Guard.ArgumentNotNull(nameof(shortUrlRequest.ttl), shortUrlRequest.ttl);
+
+                var tenant = FetchTenantFromUser();
+
                 bool isUri = Uri.IsWellFormedUriString(shortUrlRequest.LongUrl, UriKind.Absolute);
                 if (!isUri)
                 {
@@ -94,6 +113,7 @@ namespace webApp_urlshortener.Controllers
                 var shortUrl = new ShortUrl
                 {
                     LongUrl = shortUrlRequest.LongUrl,
+                    Tenant = tenant,
                     Expiration = DateTime.UtcNow.AddSeconds((double)shortUrlRequest.ttl)
                 };
                 shortUrl = await _urlShortenerService.UpsertShortUrlAsync(shortUrlRequest.ExpiredKey,

@@ -17,11 +17,12 @@ namespace dotnetcore.urlshortener.contracts.Models
             {
                 Expiration = document.Expiration,
                 Id = document.Id,
-                LongUrl = document.LongUrl 
+                Tenant = document.Tenant,
+                LongUrl = document.LongUrl
             };
             return shortUrl;
         }
-        public static ShortUrlCosmosDocumentBase ToShortUrlCosmosDocument(this ShortUrl shortUrl)   
+        public static ShortUrlCosmosDocumentBase ToShortUrlCosmosDocument(this ShortUrl shortUrl)
         {
             int? ttl = null;
             if (shortUrl.Expiration != null)
@@ -38,6 +39,7 @@ namespace dotnetcore.urlshortener.contracts.Models
             {
                 Id = shortUrl.Id,
                 LongUrl = shortUrl.LongUrl,
+                Tenant = shortUrl.Tenant,
                 Expiration = shortUrl.Expiration,
                 ttl = ttl
             };
@@ -47,15 +49,20 @@ namespace dotnetcore.urlshortener.contracts.Models
     public class ShortUrlCosmosDocumentBase
     {
         public ShortUrlCosmosDocumentBase() { }
-        public ShortUrlCosmosDocumentBase(ShortUrlCosmosDocumentBase other) {
+        public ShortUrlCosmosDocumentBase(ShortUrlCosmosDocumentBase other)
+        {
             Id = other.Id;
             LongUrl = other.LongUrl;
             Expiration = other.Expiration;
+            Tenant = other.Tenant;
             ttl = other.ttl;
         }
 
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
+
+        [JsonProperty(PropertyName = "tenant")]
+        public string Tenant { get; set; }
 
         [JsonProperty(PropertyName = "longUrl")]
         public string LongUrl { get; set; }
@@ -66,11 +73,13 @@ namespace dotnetcore.urlshortener.contracts.Models
         [JsonProperty(PropertyName = "ttl", NullValueHandling = NullValueHandling.Ignore)]
         public int? ttl { get; set; }
     }
-    public class ShortUrlCosmosDocument: ShortUrlCosmosDocumentBase {
+    public class ShortUrlCosmosDocument : ShortUrlCosmosDocumentBase
+    {
         public ShortUrlCosmosDocument() { }
         public ShortUrlCosmosDocument(ShortUrlCosmosDocumentBase other) : base(other) { }
     }
-    public class ExpiredShortUrlCosmosDocument : ShortUrlCosmosDocumentBase {
+    public class ExpiredShortUrlCosmosDocument : ShortUrlCosmosDocumentBase
+    {
         public ExpiredShortUrlCosmosDocument() { }
         public ExpiredShortUrlCosmosDocument(ShortUrlCosmosDocumentBase other) : base(other) { }
     }

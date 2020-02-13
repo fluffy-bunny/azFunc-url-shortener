@@ -20,6 +20,8 @@ namespace CosmosDB.Simple.Store.DbContext
 
         private Uri _documentCollectionUri;
 
+        public Uri DocumentCollectionUri => _documentCollectionUri;
+
         public DocumentDBRepository(
             IOptions<CosmosDbConfiguration<T>> settings,
             ConnectionPolicy connectionPolicy = null,
@@ -38,6 +40,7 @@ namespace CosmosDB.Simple.Store.DbContext
             await CreateCollectionIfNotExistsAsync();
 
         }
+
         public async Task<T> GetItemAsync(string id)
         {
             try
@@ -56,23 +59,6 @@ namespace CosmosDB.Simple.Store.DbContext
                     throw;
                 }
             }
-        }
-
-        public async Task<IEnumerable<T>> GetItemsAsync(Expression<Func<T, bool>> predicate)
-        {
-            IDocumentQuery<T> query = DocumentClient.CreateDocumentQuery<T>(
-                    _documentCollectionUri,
-                    new FeedOptions { MaxItemCount = -1 })
-                .Where(predicate)
-                .AsDocumentQuery();
-
-            List<T> results = new List<T>();
-            while (query.HasMoreResults)
-            {
-                results.AddRange(await query.ExecuteNextAsync<T>());
-            }
-
-            return results;
         }
 
         public async Task<Document> UpsertItemAsync(T item)
@@ -115,6 +101,17 @@ namespace CosmosDB.Simple.Store.DbContext
                     throw;
                 }
             }
+        }
+
+        public async Task<IEnumerable<T>> GetItemsAsync(Expression<Func<T, bool>> predicate)
+        {
+            var items = DocumentClient
+                .CreateDocumentQuery<T>(
+                DocumentCollectionUri)
+                .Where(predicate)
+                .AsEnumerable();
+            return items;
+
         }
     }
 }

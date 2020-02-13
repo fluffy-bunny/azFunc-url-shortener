@@ -55,5 +55,24 @@ namespace dotnetcore.urlshortener.InMemoryStore
                 _database.Remove(id);
             }
         }
+
+        public async Task<ShortUrl> GetShortUrlAsync(string id, string tenant)
+        {
+            var shortUrl = await GetShortUrlAsync(id);
+            if (shortUrl.Tenant == tenant)
+            {
+                return shortUrl;
+            }
+            return null;
+        }
+
+        public async Task RemoveShortUrlAsync(string id, string tenant)
+        {
+            var shortUrl = await GetShortUrlAsync(id);
+            if (shortUrl.Tenant == tenant)
+            {
+                await RemoveShortUrlAsync(id);
+            }
+        }
     }
 }
