@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using dotnetcore.urlshortener.contracts.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -8,7 +9,7 @@ namespace dotnetcore.oauth2Services.Models
     {
         [JsonProperty("authority")]
         public string Authority { get; set; }
-        [JsonProperty("client_credentials")]
-        public List<ClientCredential> ClientCredentialsClientCredentials { get; set; }
+        [JsonProperty("tenants")]
+        public List<Tenant> Tenants { get; set; }
     }
 }

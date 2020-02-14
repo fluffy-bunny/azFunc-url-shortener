@@ -1,4 +1,5 @@
 ﻿using dotnetcore.oauth2Services.Models;
+using dotnetcore.urlshortener.contracts.Models;
 using IdentityModel.Client;
 using Microsoft.Extensions.Options;
 using System;
@@ -17,7 +18,7 @@ namespace dotnetcore.oauth2Services
         class TokenRecord
         {
             public TokenResponse TokenResponse { get; set; }
-            public ClientCredential ClientCredential { get; set; }
+            public Credentials ClientCredential { get; set; }
             public DateTime Expiration { get; set; }
         }
         private Dictionary<string, TokenRecord> TokenRecords { get; set; }
@@ -64,14 +65,14 @@ namespace dotnetcore.oauth2Services
         }
 
 
-        public async Task<TokenResponse> RefreshAccessTokenAsync(string tenant)
+        public async Task<TokenResponse> RefreshAccessTokenAsync(string tenantName)
         {
 
-            var clientCredentials = (from item in _options.ClientCredentialsClientCredentials
-                                     where item.Tenant == tenant
-                                     select item).FirstOrDefault();
+            var tenant = (from item in _options.Tenants
+                          where item.Name == tenantName
+                          select item).FirstOrDefault();
 
-            if (clientCredentials == null)
+            if (tenant == null)
             {
                 return null;
             }
@@ -81,13 +82,13 @@ namespace dotnetcore.oauth2Services
             var tokenResonse = await tokenClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest()
             {
                 Address = document.TokenEndpoint,
-                ClientId = clientCredentials.ClientId,
-                ClientSecret = clientCredentials.ClientSecret,
+                ClientId = tenant.Credentials.ClientId,
+                ClientSecret = tenant.Credentials.ClientSecret,
             });
-            TokenRecords[tenant] = new TokenRecord
+            TokenRecords[tenantName] = new TokenRecord
             {
                 TokenResponse = tokenResonse,
-                ClientCredential = clientCredentials,
+                ClientCredential = tenant.Credentials,
                 Expiration = DateTime.UtcNow.AddSeconds(tokenResonse.ExpiresIn - 300)  // give a 5 minute skew.
             };
 

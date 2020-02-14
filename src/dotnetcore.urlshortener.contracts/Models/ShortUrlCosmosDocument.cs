@@ -83,5 +83,6 @@ namespace dotnetcore.urlshortener.contracts.Models
         public ExpiredShortUrlCosmosDocument() { }
         public ExpiredShortUrlCosmosDocument(ShortUrlCosmosDocumentBase other) : base(other) { }
     }
+
 }
 

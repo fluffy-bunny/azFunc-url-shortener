@@ -75,7 +75,7 @@ namespace webApp_urlshortener
             services.AddClientCredentialsManager(options =>
             {
                 options.Authority = cc.Authority;
-                options.ClientCredentialsClientCredentials = cc.ClientCredentialsClientCredentials;
+                options.Tenants = cc.Tenants;
             });
 
             services.AddSimpleItemStore<ShortUrlCosmosDocument>(options =>
