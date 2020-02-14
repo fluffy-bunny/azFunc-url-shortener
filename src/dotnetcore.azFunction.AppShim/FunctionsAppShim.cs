@@ -29,11 +29,15 @@ namespace dotnetcore.azFunction.AppShim
                      webHost.UseStartup<TStartup>();
                      webHost.ConfigureAppConfiguration((hostingContext, config) =>
                      {
-
                          var environmentName = hostingContext.HostingEnvironment.EnvironmentName;
                          config.SetBasePath(context.FunctionAppDirectory);
                          LoadConfigurationsDelegate(config, environmentName);
+                         config.AddEnvironmentVariables();
                      });
+                 })
+                 .ConfigureServices((context, services) =>
+                 {
+
                  })
                  .ConfigureLogging((context, loggingBuilder) =>
                  {

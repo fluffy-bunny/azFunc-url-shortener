@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CosmosDB.Simple.Store.Configuration;
 using CosmosDB.Simple.Store.Extensions;
+using dotnetcore.oauth2Services.Extensions;
+using dotnetcore.oauth2Services.Models;
 using dotnetcore.urlshortener.contracts;
 using dotnetcore.urlshortener.contracts.Models;
 using dotnetcore.urlshortener.CosmosDBStore.Extensions;
 using dotnetcore.urlshortener.Extensions;
 using dotnetcore.urlshortener.generator.Extensions;
 using dotnetcore.urlshortener.InMemoryStore;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -20,6 +24,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using webApp_urlshortener.Controllers;
 using webApp_urlshortener.Models.jwt_validation;
 
 namespace webApp_urlshortener
@@ -37,6 +42,7 @@ namespace webApp_urlshortener
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpClient();
 
             services.AddControllers();
             var jwt_validate_settings = Configuration["jwt-validate-settings"];
@@ -63,6 +69,14 @@ namespace webApp_urlshortener
             primaryKey = primaryKey ?? "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
             cosmosEndpointUri = cosmosEndpointUri ?? "https://localhost:8081";
 
+            var creds = Environment.GetEnvironmentVariable("azFunc-shorturl-client-credentials");
+            var cc = JsonConvert.DeserializeObject<ClientCredentials>(creds);
+
+            services.AddClientCredentialsManager(options =>
+            {
+                options.Authority = cc.Authority;
+                options.ClientCredentialsClientCredentials = cc.ClientCredentialsClientCredentials;
+            });
 
             services.AddSimpleItemStore<ShortUrlCosmosDocument>(options =>
             {
