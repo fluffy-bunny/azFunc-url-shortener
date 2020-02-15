@@ -33,11 +33,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "azFunc-urlshortener", "azFu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnetcore.azFunction.AppShim", "dotnetcore.azFunction.AppShim\dotnetcore.azFunction.AppShim.csproj", "{E809351F-E104-4502-A28F-529675CF3507}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnetcore.oauth2Services", "dotnetcore.oauth2Services\dotnetcore.oauth2Services.csproj", "{494F3E35-2A30-407D-AD16-AFDD84E21F33}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnetcore.keyvault.fetch", "dotnetcore.keyvault.fetch\dotnetcore.keyvault.fetch.csproj", "{2983E9FA-B904-4B42-B927-140887B0262A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyVaultStores", "KeyVaultStores\KeyVaultStores.csproj", "{BADB27F9-7972-4F13-ADEF-23E4116B1AAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KeyVaultStores", "KeyVaultStores\KeyVaultStores.csproj", "{BADB27F9-7972-4F13-ADEF-23E4116B1AAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,10 +95,6 @@ Global
 		{E809351F-E104-4502-A28F-529675CF3507}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E809351F-E104-4502-A28F-529675CF3507}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E809351F-E104-4502-A28F-529675CF3507}.Release|Any CPU.Build.0 = Release|Any CPU
-		{494F3E35-2A30-407D-AD16-AFDD84E21F33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{494F3E35-2A30-407D-AD16-AFDD84E21F33}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{494F3E35-2A30-407D-AD16-AFDD84E21F33}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{494F3E35-2A30-407D-AD16-AFDD84E21F33}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2983E9FA-B904-4B42-B927-140887B0262A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2983E9FA-B904-4B42-B927-140887B0262A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2983E9FA-B904-4B42-B927-140887B0262A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -119,7 +113,6 @@ Global
 		{EC7EC9A3-A586-4072-900A-65AA32419775} = {798F0471-F1B7-4303-877E-D24F9B21C3AA}
 		{48E1FF6C-930C-4A67-9929-65FE357CFA1A} = {798F0471-F1B7-4303-877E-D24F9B21C3AA}
 		{E809351F-E104-4502-A28F-529675CF3507} = {798F0471-F1B7-4303-877E-D24F9B21C3AA}
-		{494F3E35-2A30-407D-AD16-AFDD84E21F33} = {798F0471-F1B7-4303-877E-D24F9B21C3AA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F361EDA6-E6D5-4027-9D15-E929594D52C7}

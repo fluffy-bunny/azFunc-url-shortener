@@ -5,8 +5,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CosmosDB.Simple.Store.Configuration;
 using CosmosDB.Simple.Store.Extensions;
-using dotnetcore.oauth2Services.Extensions;
-using dotnetcore.oauth2Services.Models;
 using dotnetcore.urlshortener.contracts;
 using dotnetcore.urlshortener.contracts.Models;
 using dotnetcore.urlshortener.CosmosDBStore.Extensions;
@@ -70,20 +68,22 @@ namespace webApp_urlshortener
             primaryKey = primaryKey ?? "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
             cosmosEndpointUri = cosmosEndpointUri ?? "https://localhost:8081";
 
-           /*
-            var creds = Environment.GetEnvironmentVariable("azFunc-shorturl-client-credentials");
-            var cc = JsonConvert.DeserializeObject<TenantConfiguration>(creds);
-
-            services.AddClientCredentialsManager(options =>
+            TenantConfiguration tenantConfiguration = null;
+            try
             {
-                options.Authority = cc.Authority;
-                options.Tenants = cc.Tenants;
-            });
-            */
+                var creds = Environment.GetEnvironmentVariable("azFunc-shorturl-client-credentials");
+                tenantConfiguration = JsonConvert.DeserializeObject<TenantConfiguration>(creds);
+            }
+            catch (Exception e)
+            {
+
+            }
+ 
             services.AddKeyValutTenantStore(options => {
                 options.ExpirationSeconds = 300;
                 options.KeyVaultName = "kv-organics";
                 options.SecretName = "azFunc-shorturl-client-credentials";
+                options.Value = tenantConfiguration; // ok if null.  If it is not null we don't go to key vault at all
             });
 
             services.AddSimpleItemStore<ShortUrlCosmosDocument>(options =>
