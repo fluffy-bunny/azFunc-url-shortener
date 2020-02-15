@@ -1,4 +1,5 @@
 ﻿using dotnetcore.oauth2Services;
+using dotnetcore.urlshortener.contracts;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,21 +22,26 @@ namespace webApp_urlshortener.Controllers
     public class RedirectorController : ControllerBase
     {
         private IConfiguration _configuration;
+        private ITenantStore _tenantStore;
         private IClientCredentialsManager _clientCredentialsManager;
         private ILogger<RedirectorController> _logger;
 
         public RedirectorController(
             IConfiguration configuration,
-            IClientCredentialsManager clientCredentialsManager,
+            ITenantStore tenantStore,
+       //     IClientCredentialsManager clientCredentialsManager,
             ILogger<RedirectorController> logger)
         {
             _configuration = configuration;
-            _clientCredentialsManager = clientCredentialsManager;
+            _tenantStore = tenantStore;
+    //        _clientCredentialsManager = clientCredentialsManager;
             _logger = logger;
         }
         public async Task<IActionResult> Get()
         {
-            var tokenResponse = await _clientCredentialsManager.GetAccessTokenAsync("marketing");
+            var tenantServices = await _tenantStore.GetTenantAsync("marketing");
+            var tokenResponse = await tenantServices.GetAccessTokenAsync();
+      //      tokenResponse = await _clientCredentialsManager.GetAccessTokenAsync("marketing");
             return new JsonResult(tokenResponse.AccessToken);
         }
     }

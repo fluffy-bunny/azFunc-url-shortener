@@ -14,6 +14,7 @@ using dotnetcore.urlshortener.Extensions;
 using dotnetcore.urlshortener.generator.Extensions;
 using dotnetcore.urlshortener.InMemoryStore;
 using IdentityModel.Client;
+using KeyVaultStores.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -69,13 +70,20 @@ namespace webApp_urlshortener
             primaryKey = primaryKey ?? "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
             cosmosEndpointUri = cosmosEndpointUri ?? "https://localhost:8081";
 
+           /*
             var creds = Environment.GetEnvironmentVariable("azFunc-shorturl-client-credentials");
-            var cc = JsonConvert.DeserializeObject<ClientCredentials>(creds);
+            var cc = JsonConvert.DeserializeObject<TenantConfiguration>(creds);
 
             services.AddClientCredentialsManager(options =>
             {
                 options.Authority = cc.Authority;
                 options.Tenants = cc.Tenants;
+            });
+            */
+            services.AddKeyValutTenantStore(options => {
+                options.ExpirationSeconds = 300;
+                options.KeyVaultName = "kv-organics";
+                options.SecretName = "azFunc-shorturl-client-credentials";
             });
 
             services.AddSimpleItemStore<ShortUrlCosmosDocument>(options =>

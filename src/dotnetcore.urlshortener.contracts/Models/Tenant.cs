@@ -21,6 +21,15 @@ namespace dotnetcore.urlshortener.contracts.Models
 
 
      */
+
+    public partial class TenantConfiguration
+    {
+        [JsonProperty("authority")]
+        public string Authority { get; set; }
+        [JsonProperty("tenants")]
+        public List<Tenant> Tenants { get; set; }
+    }
+
     public partial class Tenant
     {
         [JsonProperty("credentials")]

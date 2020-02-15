@@ -9,25 +9,28 @@ using System.Threading.Tasks;
 
 namespace dotnetcore.keyvault.fetch
 {
-    public class KeyVaultFetchStore<T>
+    public abstract class KeyVaultFetchStore<T>
         where T : class
     {
         private KeyVaultClientStoreOptions<T> _options;
-        private ILogger<KeyVaultFetchStore<T>> _logger;
+        private ILogger _logger;
         private T _value;
         private DateTime _lastRead;
 
         public KeyVaultFetchStore(
             IOptions<KeyVaultClientStoreOptions<T>> options,
-            ILogger<KeyVaultFetchStore<T>> logger)
+            ILogger logger)
         {
             _options = options.Value;
             _logger = logger;
         }
-        protected virtual void AugmentFetchedValue(ref T value)
+        protected virtual T DeserializeValue(string raw)
         {
-
+            var value = JsonConvert.DeserializeObject<T>(raw);
+            return value;
         }
+        protected abstract void OnRefresh();
+
         async Task<T> HardFetchAsync()
         {
             try
@@ -37,11 +40,11 @@ namespace dotnetcore.keyvault.fetch
                     return _options.Value;
                 }
                 /* The next four lines of code show you how to use AppAuthentication library to fetch secrets from your key vault */
-                AzureServiceTokenProvider azureServiceTokenProvider = new AzureServiceTokenProvider();
-                KeyVaultClient keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
+                var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                var keyVaultClient = new KeyVaultClient(
+                                        new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
                 var secret = await keyVaultClient.GetSecretAsync(_options.KeyVaultSecretUrl);
-                var value = JsonConvert.DeserializeObject<T>(secret.Value);
-                AugmentFetchedValue(ref value);
+                var value = DeserializeValue(secret.Value);
                 return value;
             }
             catch (Exception ex)
@@ -56,6 +59,7 @@ namespace dotnetcore.keyvault.fetch
             {
                 _value = await HardFetchAsync();
                 _lastRead = DateTime.UtcNow;
+                OnRefresh();
             }
             else
             {
@@ -64,6 +68,7 @@ namespace dotnetcore.keyvault.fetch
                 {
                     _value = await HardFetchAsync();
                     _lastRead = DateTime.UtcNow;
+                    OnRefresh();
                 }
             }
         }

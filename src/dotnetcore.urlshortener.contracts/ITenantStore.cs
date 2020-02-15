@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace dotnetcore.urlshortener.contracts
 {
-    public interface ITenant
+    public interface ITenantServices
     {
         Task<TokenResponse> GetAccessTokenAsync();
         Task<TokenResponse> RefreshAccessTokenAsync();
@@ -12,7 +12,7 @@ namespace dotnetcore.urlshortener.contracts
     }
     public interface ITenantStore
     {
-        Task<ITenant> GetTenantAsync(string tenant);
+        Task<ITenantServices> GetTenantAsync(string tenant);
 
     }
 }
