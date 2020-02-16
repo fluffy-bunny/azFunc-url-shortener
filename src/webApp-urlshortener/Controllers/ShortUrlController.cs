@@ -69,6 +69,7 @@ namespace webApp_urlshortener.Controllers
         }
 
         [HttpGet]
+        [Route("{key}")]
         public async Task<IActionResult> RetrieveRecord(string key)
         {
             try

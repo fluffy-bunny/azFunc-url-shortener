@@ -20,23 +20,30 @@ namespace webApp_urlshortener.Controllers
     [Route("Redirector")]
     public class RedirectorController : ControllerBase
     {
+        private IHttpClientFactory _httpClientFactory;
         private IConfiguration _configuration;
         private ITenantStore _tenantStore;
         private ILogger<RedirectorController> _logger;
 
         public RedirectorController(
+             IHttpClientFactory httpClientFactory,
             IConfiguration configuration,
             ITenantStore tenantStore,
             ILogger<RedirectorController> logger)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _tenantStore = tenantStore;
             _logger = logger;
         }
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string tenant, string key)
         {
-            var tenantServices = await _tenantStore.GetTenantAsync("marketing");
+            var tenantServices = await _tenantStore.GetTenantAsync(tenant);
             var tokenResponse = await tenantServices.GetAccessTokenAsync();
+            var client = _httpClientFactory.CreateClient("short-url");
+            client.BaseAddress = new Uri("https://apim-organics.azure-api.net/azFunc-urlshortener/short-url-service");
+            client.SetBearerToken(tokenResponse.AccessToken);
+
             return new JsonResult(tokenResponse.AccessToken);
         }
     }

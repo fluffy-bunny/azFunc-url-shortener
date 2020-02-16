@@ -60,11 +60,11 @@ namespace dotnetcore.azFunction.AppShim
             var httpRequestMessageFeature = new HttpRequestMessageFeature(request);
             var httpRequestMessage = httpRequestMessageFeature.HttpRequestMessage;
 
-            var path = new PathString(request.Path.Value.ToLower());
+         //  var path = new PathString(request.Path.Value.ToLower());
 
             var uriBuilder = new UriBuilder(request.Scheme, request.Host.Host)
             {
-                Path = path,
+                Path = request.Path,
                 Query = request.QueryString.Value
             };
             if (request.Host.Port != null)
