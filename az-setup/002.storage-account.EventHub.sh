@@ -1,3 +1,5 @@
+# https://docs.microsoft.com/en-us/azure/event-grid/custom-event-to-queue-storage
+
 RG_FRIENDLY_NAME="organics"
 APP_SHORT_URL="shorturl"
 LOCATION="eastus2"
@@ -7,6 +9,7 @@ SKU="Standard_LRS"
 KIND="StorageV2"
 EVENTHUB_NAMESPACE="evhns-$APP_SHORT_URL"
 EVENTHUB_NAME="evh-$APP_SHORT_URL"
+QUEUE_NAME="stq-$APP_SHORT_URL-usage"
 
 echo "=== Create Storage Account: $STORAGE_ACCOUNT_NAME in ResourceGroup $RESOURCE_GROUP_NAME at Location $LOCATION ==="
 az storage account create \
@@ -16,6 +19,7 @@ az storage account create \
     --sku $SKU \
     --kind $KIND \
     --access-tier Hot  
+az storage queue create --name $QUEUE_NAME --account-name $STORAGE_ACCOUNT_NAME
 
 AZURE_STORAGE_ACCESS_KEY="$(az storage account keys list \
                                 --account-name $STORAGE_ACCOUNT_NAME \
