@@ -9,6 +9,7 @@ namespace azFunc_urlshortener
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            builder.Services.AddHttpClient();
             var functionsAppShim = new FunctionsAppShim<webApp_urlshortener.Startup>
             {
                 LoadConfigurationsDelegate = webApp_urlshortener.Program.LoadConfigurations,
