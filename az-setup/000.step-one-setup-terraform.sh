@@ -17,6 +17,15 @@ fi
 echo 'SUBSCRIPTION_NAME = '$SUBSCRIPTION_NAME
 
 az login
+echo '----- Current Account -----'
+az account show
+echo '----- devops -----'
+az extension add --name azure-devops
+az devops project create --name azfunc_shorturl --org https://dev.azure.com/nlok-general-services    
+
+az devops configure --defaults organization=https://dev.azure.com/nlok-general-services project=azfunc_shorturl
+az devops service-endpoint create \
+    --service-endpoint-configuration azure_resource_manager_service_connection.json
 
 SUBSCRIPTION_ID="$(az account show -s $SUBSCRIPTION_NAME --query id -o tsv)"
 echo 'SUBSCRIPTION_ID = '$SUBSCRIPTION_ID
