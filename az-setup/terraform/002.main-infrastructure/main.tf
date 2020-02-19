@@ -56,6 +56,14 @@ resource "azurerm_function_app" "azfunc_shorturl" {
   app_service_plan_id       = azurerm_app_service_plan.azfunc_consumption.id
   storage_connection_string = azurerm_storage_account.azfunc_shorturl.primary_connection_string
   identity { type = "SystemAssigned" }
+  app_settings = {
+    "SOME_KEY" = "some-value",
+    "azFunc-shorturl-client-credentials" = var.azFunc_shorturl_client_credentials,
+    "azFunc-shorturl-cosmos-primary-connection-string" = var.azFunc_shorturl_cosmos_primary_connection_string,
+    "azFunc-shorturl-cosmos-primarykey" = var.azFunc_shorturl_cosmos_primarykey,
+    "azFunc-shorturl-cosmos-urig" = var.azFunc_shorturl_cosmos_uri,
+  }
+
 }
 
 

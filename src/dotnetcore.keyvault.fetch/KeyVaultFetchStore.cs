@@ -24,9 +24,23 @@ namespace dotnetcore.keyvault.fetch
             _options = options.Value;
             _logger = logger;
         }
+        private static string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+        }
         protected virtual T DeserializeValue(string raw)
         {
-            var value = JsonConvert.DeserializeObject<T>(raw);
+            T value;
+            if (raw.EndsWith("=="))
+            {
+                var jsonDecoded = Base64Decode(raw);
+                value = JsonConvert.DeserializeObject<T>(jsonDecoded);
+            }
+            else
+            {
+                value = JsonConvert.DeserializeObject<T>(raw);
+            }
             return value;
         }
         protected abstract void OnRefresh();

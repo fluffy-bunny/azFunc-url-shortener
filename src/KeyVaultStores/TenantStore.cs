@@ -4,7 +4,7 @@ using dotnetcore.urlshortener.contracts.Models;
 using IdentityModel.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
- using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -15,13 +15,13 @@ namespace KeyVaultStores
     public class TenantStore : KeyVaultFetchStore<TenantConfiguration>, ITenantStore
     {
         private IHttpClientFactory _httpClientFactory;
- 
+
         public TenantStore(
             IOptions<KeyVaultClientStoreOptions<TenantConfiguration>> options,
             IHttpClientFactory httpClientFactory,
-            ILogger<TenantConfiguration> logger) : base(options,logger)
+            ILogger<TenantConfiguration> logger) : base(options, logger)
         {
- 
+
             _httpClientFactory = httpClientFactory;
             TenantCache = new ConcurrentDictionary<string, ITenantServices>();
         }
@@ -36,11 +36,11 @@ namespace KeyVaultStores
             }
             return _discoveryCache;
         }
-         
+
         public async Task<ITenantServices> GetTenantAsync(string tenant)
         {
             ITenantServices tenantServices = null;
-            if(TenantCache.TryGetValue(tenant,out tenantServices))
+            if (TenantCache.TryGetValue(tenant, out tenantServices))
             {
                 return tenantServices;
             }
@@ -49,7 +49,7 @@ namespace KeyVaultStores
             var tenantConfig = (from item in value.Tenants
                                 where item.Name == tenant
                                 select item).FirstOrDefault();
-            if(tenantConfig == null)
+            if (tenantConfig == null)
             {
                 return null;
             }

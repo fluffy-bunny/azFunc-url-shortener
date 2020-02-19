@@ -15,6 +15,22 @@ variable "azFunc_shorturl_name" {
   description = "(Required) The az function shorturl name."
   type        = string
 }
+variable "azFunc_shorturl_cosmos_primary_connection_string" {
+  description = "(Required) azFunc_shorturl_cosmos_primary_connection_string."
+  type        = string
+}
+variable "azFunc_shorturl_client_credentials" {
+  description = "(Required) azFunc_shorturl_client_credentials."
+  type        = string
+}
+variable "azFunc_shorturl_cosmos_primarykey" {
+  description = "(Required) azFunc_shorturl_cosmos_primarykey."
+  type        = string
+}
+variable "azFunc_shorturl_cosmos_uri" {
+  description = "(Required) azFunc_shorturl_cosmos_uri."
+  type        = string
+}
 
 
 variable "tags" {
