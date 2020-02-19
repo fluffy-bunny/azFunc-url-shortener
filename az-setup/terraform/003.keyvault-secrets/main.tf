@@ -24,7 +24,10 @@ data "azurerm_key_vault" "main" {
 resource "azurerm_key_vault_secret" "main" {
   for_each     = {
     "message" = "Hello, world!",
-    "azFunc-shorturl-client-credentials" = "eyJhdXRob3JpdHkiOiJodHRwczovL2FwaW0tb3JnYW5pY3MuYXp1cmUtYXBpLm5ldC9vYXV0aDIiLCJ0ZW5hbnRzIjpbeyJjcmVkZW50aWFscyI6eyJjbGllbnRfaWQiOiJiMmItY2xpZW50IiwiY2xpZW50X3NlY3JldCI6InNlY3JldCJ9LCJuYW1lIjoibWFya2V0aW5nIiwib3B0aW9ucyI6eyJtYXhfdHRsIjoyNTkyMDAwfX1dfQ=="
+    "azFunc-shorturl-client-credentials" = var.azFunc_shorturl_client_credentials,
+    "azFunc-shorturl-cosmos-primary-connection-string" = var.azFunc_shorturl_cosmos_primary_connection_string,
+    "azFunc-shorturl-cosmos-primarykey" = var.azFunc_shorturl_cosmos_primarykey,
+    "azFunc-shorturl-cosmos-uri" = var.azFunc_shorturl_cosmos_uri
   }
   name         = each.key
   value        = each.value
