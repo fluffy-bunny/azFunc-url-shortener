@@ -27,6 +27,36 @@ resource "azurerm_resource_group" "rg" {
   location = var.az_resource_group_location
 }
 
+resource "azurerm_application_insights" "main" {
+  name                = "appis-shorturl"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  application_type    = "web"
+}
+
+resource "azurerm_cosmosdb_account" "main" {
+  name                = "cosmos-shorturl"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  offer_type          = "Standard"
+  kind                = "GlobalDocumentDB"
+
+  enable_automatic_failover = false
+
+  consistency_policy {
+    consistency_level       = "Eventual"
+    max_interval_in_seconds = 5
+    max_staleness_prefix    = 100
+  }
+
+  geo_location {
+    prefix            = "cosmos-shorturl-customid"
+    location          = azurerm_resource_group.rg.location
+    failover_priority = 0
+  }
+}
+
+
 resource "azurerm_storage_account" "azfunc_shorturl" {
   name                     = "stazfuncshorturl"
   resource_group_name      = azurerm_resource_group.rg.name
@@ -53,6 +83,8 @@ resource "azurerm_function_app" "azfunc_shorturl" {
   storage_connection_string = azurerm_storage_account.azfunc_shorturl.primary_connection_string
   identity { type = "SystemAssigned" }
   app_settings = {
+    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.main.instrumentation_key,
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = format("InstrumentationKey=%s", azurerm_application_insights.main.instrumentation_key),
     "azFunc-shorturl-cosmos-primary-connection-string" = var.azFunc_shorturl_cosmos_primary_connection_string,
     "azFunc-shorturl-cosmos-primarykey" = var.azFunc_shorturl_cosmos_primarykey,
     "azFunc-shorturl-cosmos-urig" = var.azFunc_shorturl_cosmos_uri,
