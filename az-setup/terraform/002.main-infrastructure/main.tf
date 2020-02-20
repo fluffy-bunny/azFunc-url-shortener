@@ -55,7 +55,40 @@ resource "azurerm_cosmosdb_account" "main" {
     failover_priority = 0
   }
 }
+resource "azurerm_cosmosdb_sql_database" "shorturl_db" {
+  name                = "shorturl"
+  resource_group_name = azurerm_cosmosdb_account.main.resource_group_name
+  account_name        = azurerm_cosmosdb_account.main.name
+  throughput          = 400
+}
+resource "azurerm_cosmosdb_sql_container" "shorturl_container" {
+  name                = "shorturl"
+  resource_group_name = azurerm_cosmosdb_account.main.resource_group_name
+  account_name        = azurerm_cosmosdb_account.main.name
+  database_name       = azurerm_cosmosdb_sql_database.shorturl_db.name
+  partition_key_path  = "/id"
+  throughput          = 400
+  default_ttl         = -1 
+}
+resource "azurerm_cosmosdb_sql_container" "expired_shorturl_container" {
+  name                = "expired-shorturl"
+  resource_group_name = azurerm_cosmosdb_account.main.resource_group_name
+  account_name        = azurerm_cosmosdb_account.main.name
+  database_name       = azurerm_cosmosdb_sql_database.shorturl_db.name
+  partition_key_path  = "/id"
+  throughput          = 400
+  default_ttl         = -1 
+}
 
+resource "azurerm_key_vault_secret" "main" {
+  for_each     = {
+    "azFunc-shorturl-cosmos-primarykey" = azurerm_cosmosdb_account.main.primary_master_key,
+    "azFunc-shorturl-cosmos-uri" = azurerm_cosmosdb_account.main.endpoint,
+  }
+  name         = each.key
+  value        = each.value
+  key_vault_id = module.key_vault.id
+}
 
 resource "azurerm_storage_account" "azfunc_shorturl" {
   name                     = "stazfuncshorturl"
@@ -65,7 +98,7 @@ resource "azurerm_storage_account" "azfunc_shorturl" {
   account_replication_type = "LRS"
 }
 resource "azurerm_app_service_plan" "azfunc_consumption" {
-  name                = "azure-functions-shorturl-service-plan"
+  name                = "plan-shorturl"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   kind                = "FunctionApp"
