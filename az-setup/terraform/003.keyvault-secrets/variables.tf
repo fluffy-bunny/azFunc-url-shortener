@@ -19,19 +19,7 @@ variable "azFunc_shorturl_client_credentials" {
   description = "(Required) The azFunc_shorturl_client_credentials name."
   type        = string
 }
-variable "azFunc_shorturl_cosmos_primary_connection_string" {
-  description = "(Required) The azFunc_shorturl_cosmos_primary_connection_string name."
-  type        = string
-}
-variable "azFunc_shorturl_cosmos_primarykey" {
-  description = "(Required) The azFunc_shorturl_cosmos_primarykey name."
-  type        = string
-}
-variable "azFunc_shorturl_cosmos_uri" {
-  description = "(Required) The azFunc_shorturl_cosmos_uri name."
-  type        = string
-}
-
+ 
 variable "tags" {
   description = "Tags to help identify various services."
   type        = map

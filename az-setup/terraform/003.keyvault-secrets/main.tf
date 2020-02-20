@@ -21,13 +21,18 @@ data "azurerm_key_vault" "main" {
   name = var.az_keyvault_name
   resource_group_name         = data.azurerm_resource_group.rg.name
 }
+data "azurerm_cosmosdb_account" "main" {
+  name = "cosmos-shorturl"
+  resource_group_name         = data.azurerm_resource_group.rg.name
+}
+
 resource "azurerm_key_vault_secret" "main" {
   for_each     = {
     "message" = "Hello, world!",
     "azFunc-shorturl-client-credentials" = var.azFunc_shorturl_client_credentials,
-    "azFunc-shorturl-cosmos-primary-connection-string" = var.azFunc_shorturl_cosmos_primary_connection_string,
-    "azFunc-shorturl-cosmos-primarykey" = var.azFunc_shorturl_cosmos_primarykey,
-    "azFunc-shorturl-cosmos-uri" = var.azFunc_shorturl_cosmos_uri
+    "azFunc-shorturl-cosmos-primary-connection-string" = format("AccountEndpoint=%s;AccountKey=%s;",data.azurerm_cosmosdb_account.main.endpoint,data.azurerm_cosmosdb_account.main.primary_master_key),
+    "azFunc-shorturl-cosmos-primarykey" = data.azurerm_cosmosdb_account.main.primary_master_key,
+    "azFunc-shorturl-cosmos-uri"        = data.azurerm_cosmosdb_account.main.endpoint,
   }
   name         = each.key
   value        = each.value
