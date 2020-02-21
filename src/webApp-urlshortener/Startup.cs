@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using CosmosDB.Simple.Store.Configuration;
 using CosmosDB.Simple.Store.Extensions;
@@ -28,8 +29,24 @@ using webApp_urlshortener.Models.jwt_validation;
 
 namespace webApp_urlshortener
 {
+    public partial class KeyVaultConfiguration
+    {
+        [JsonProperty("expirationSeconds")]
+        public int ExpirationSeconds { get; set; }
+
+        [JsonProperty("keyVaultName")]
+        public string KeyVaultName { get; set; }
+
+        [JsonProperty("secretName")]
+        public string SecretName { get; set; }
+    }
     public class Startup
     {
+        private static string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+        }
         public IConfiguration Configuration { get; }
         private IWebHostEnvironment _env;
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
@@ -45,6 +62,8 @@ namespace webApp_urlshortener
 
             services.AddControllers();
             var jwt_validate_settings = Configuration["jwt-validate-settings"];
+            jwt_validate_settings = Base64Decode(jwt_validate_settings);
+
             var authenictation = JsonConvert.DeserializeObject<Authentication>(jwt_validate_settings);
             var tok = authenictation.ToTokenValidationParameters();
             services.AddAuthentication("Bearer")
@@ -71,18 +90,22 @@ namespace webApp_urlshortener
             TenantConfiguration tenantConfiguration = null;
             try
             {
-                var creds = Environment.GetEnvironmentVariable("azFunc-shorturl-client-credentials");
+                var creds = Base64Decode(Environment.GetEnvironmentVariable("azFunc-shorturl-client-credentials"));
                 tenantConfiguration = JsonConvert.DeserializeObject<TenantConfiguration>(creds);
             }
             catch (Exception e)
             {
-
+                tenantConfiguration = null;
             }
- 
-            services.AddKeyValutTenantStore(options => {
-                options.ExpirationSeconds = 300;
-                options.KeyVaultName = "kv-organics";
-                options.SecretName = "azFunc-shorturl-client-credentials";
+            string settingString = Configuration["keyvault-config"];
+            settingString = Base64Decode(settingString);
+            var keyVaultConfiguration = JsonConvert.DeserializeObject<KeyVaultConfiguration>(settingString);
+
+            services.AddKeyValutTenantStore(options =>
+            {
+                options.ExpirationSeconds = keyVaultConfiguration.ExpirationSeconds;
+                options.KeyVaultName = keyVaultConfiguration.KeyVaultName;
+                options.SecretName = keyVaultConfiguration.SecretName;
                 options.Value = tenantConfiguration; // ok if null.  If it is not null we don't go to key vault at all
             });
 

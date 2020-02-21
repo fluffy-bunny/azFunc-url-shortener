@@ -19,6 +19,10 @@ variable "azFunc_shorturl_client_credentials" {
   description = "(Required) The azFunc_shorturl_client_credentials name."
   type        = string
 }
+variable "jwt_validate_settings" {
+  description = "(Required) The base64 jwt_validate_settings."
+  type        = string
+}
  
 variable "tags" {
   description = "Tags to help identify various services."

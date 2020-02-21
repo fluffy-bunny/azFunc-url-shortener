@@ -33,6 +33,7 @@ resource "azurerm_key_vault_secret" "main" {
     "azFunc-shorturl-cosmos-primary-connection-string" = format("AccountEndpoint=%s;AccountKey=%s;",data.azurerm_cosmosdb_account.main.endpoint,data.azurerm_cosmosdb_account.main.primary_master_key),
     "azFunc-shorturl-cosmos-primarykey" = data.azurerm_cosmosdb_account.main.primary_master_key,
     "azFunc-shorturl-cosmos-uri"        = data.azurerm_cosmosdb_account.main.endpoint,
+    "jwt-validate-settings"             = var.jwt_validate_settings,
   }
   name         = each.key
   value        = each.value

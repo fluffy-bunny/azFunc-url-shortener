@@ -32,7 +32,7 @@ namespace dotnetcore.keyvault.fetch
         protected virtual T DeserializeValue(string raw)
         {
             T value;
-            if (raw.EndsWith("=="))
+            if (!raw.StartsWith('{'))
             {
                 var jsonDecoded = Base64Decode(raw);
                 value = JsonConvert.DeserializeObject<T>(jsonDecoded);

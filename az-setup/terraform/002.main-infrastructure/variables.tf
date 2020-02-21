@@ -32,6 +32,10 @@ variable "azFunc_shorturl_cosmos_uri" {
   type        = string
 }
 
+variable "jwt_validate_settings" {
+  description = "(Required) The base64 jwt_validate_settings."
+  type        = string
+}
 
 variable "tags" {
   description = "Tags to help identify various services."

@@ -79,17 +79,7 @@ resource "azurerm_cosmosdb_sql_container" "expired_shorturl_container" {
   throughput          = 400
   default_ttl         = -1 
 }
-
-resource "azurerm_key_vault_secret" "main" {
-  for_each     = {
-    "azFunc-shorturl-cosmos-primarykey" = azurerm_cosmosdb_account.main.primary_master_key,
-    "azFunc-shorturl-cosmos-uri" = azurerm_cosmosdb_account.main.endpoint,
-  }
-  name         = each.key
-  value        = each.value
-  key_vault_id = module.key_vault.id
-}
-
+ 
 resource "azurerm_storage_account" "azfunc_shorturl" {
   name                     = "stazfuncshorturl"
   resource_group_name      = azurerm_resource_group.rg.name
@@ -116,12 +106,13 @@ resource "azurerm_function_app" "azfunc_shorturl" {
   storage_connection_string = azurerm_storage_account.azfunc_shorturl.primary_connection_string
   identity { type = "SystemAssigned" }
   app_settings = {
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.main.instrumentation_key,
-    "APPLICATIONINSIGHTS_CONNECTION_STRING" = format("InstrumentationKey=%s", azurerm_application_insights.main.instrumentation_key),
-    "azFunc-shorturl-cosmos-primary-connection-string" = var.azFunc_shorturl_cosmos_primary_connection_string,
-    "azFunc-shorturl-cosmos-primarykey" = var.azFunc_shorturl_cosmos_primarykey,
-    "azFunc-shorturl-cosmos-urig" = var.azFunc_shorturl_cosmos_uri,
-    "FUNCTIONS_WORKER_RUNTIME" = "dotnet"
+    "APPINSIGHTS_INSTRUMENTATIONKEY"                    = azurerm_application_insights.main.instrumentation_key,
+    "APPLICATIONINSIGHTS_CONNECTION_STRING"             = format("InstrumentationKey=%s", azurerm_application_insights.main.instrumentation_key),
+    "azFunc-shorturl-cosmos-primary-connection-string"  = var.azFunc_shorturl_cosmos_primary_connection_string,
+    "azFunc-shorturl-cosmos-primarykey"                 = var.azFunc_shorturl_cosmos_primarykey,
+    "azFunc-shorturl-cosmos-uri"                        = var.azFunc_shorturl_cosmos_uri,
+    "jwt-validate-settings"                             = var.jwt_validate_settings,
+    "FUNCTIONS_WORKER_RUNTIME"                          = "dotnet"
   }
   version="~3"
 
