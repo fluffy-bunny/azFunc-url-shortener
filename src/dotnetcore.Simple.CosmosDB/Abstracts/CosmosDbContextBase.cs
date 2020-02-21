@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CosmosDB.Simple.Store.Configuration;
 using CosmosDB.Simple.Store.Extensions;
 using dotnetcore.urlshortener.Utils;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Logging;
@@ -30,7 +31,7 @@ namespace CosmosDB.Simple.Store.Abstracts
         ///     Logger
         /// </summary>
         protected readonly ILogger Logger;
-
+        public CosmosClient CosmosClient { get; }
         /// <summary>
         ///     Protected Constructor
         /// </summary>
@@ -50,11 +51,15 @@ namespace CosmosDB.Simple.Store.Abstracts
             Configuration = settings.Value;
 
             var serviceEndPoint = new Uri(settings.Value.EndPointUrl);
+            CosmosClient = new CosmosClient(serviceEndPoint.AbsoluteUri, settings.Value.PrimaryKey);
+
             DocumentClient = new DocumentClient(serviceEndPoint, settings.Value.PrimaryKey,
                 connectionPolicy ?? ConnectionPolicy.Default);
 
             EnsureDatabaseCreated(Configuration.DatabaseName).Wait();
         }
+
+       
 
         /// <summary>
         ///     CosmosDb Document Client.
@@ -64,8 +69,8 @@ namespace CosmosDB.Simple.Store.Abstracts
         /// <summary>
         ///     Instance of CosmosDb Database.
         /// </summary>
-        protected Database Database { get; private set; }
-
+        protected Microsoft.Azure.Documents.Database Database { get; private set; }
+        protected Microsoft.Azure.Cosmos.Database DatabaseV3 { get; private set; }
         /// <summary>
         ///     URL for CosmosDb Instance.
         /// </summary>
@@ -94,10 +99,12 @@ namespace CosmosDB.Simple.Store.Abstracts
         private async Task EnsureDatabaseCreated(string databaseName)
         {
             var dbNameToUse = Configuration.DatabaseName.GetValueOrDefault(databaseName);
+            // Create new database
+            DatabaseV3 = await CosmosClient.CreateDatabaseIfNotExistsAsync(dbNameToUse);
 
             DatabaseUri = UriFactory.CreateDatabaseUri(dbNameToUse);
             Logger?.LogDebug($"Database URI: {DatabaseUri}");
-            Database = new Database { Id = databaseName };
+            Database = new Microsoft.Azure.Documents.Database { Id = databaseName };
             Logger?.LogDebug($"Database: {Database}");
 
             Logger.LogDebug($"Ensuring `{Database.Id}` exists...");

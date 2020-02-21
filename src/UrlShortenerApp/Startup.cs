@@ -47,10 +47,10 @@ namespace UrlShortenerApp
                 {
                     options.EndPointUrl = "https://localhost:8081";
                     options.PrimaryKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
-                    options.DatabaseName = "ShortUrlDatabase";
+                    options.DatabaseName = "shorturl";
                     options.Collection = new Collection()
                     {
-                        CollectionName = "ShortUrl",
+                        CollectionName = "shorturl",
                         ReserveUnits = 400
                     };
 
@@ -59,10 +59,10 @@ namespace UrlShortenerApp
                 {
                     options.EndPointUrl = "https://localhost:8081";
                     options.PrimaryKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
-                    options.DatabaseName = "ShortUrlDatabase";
+                    options.DatabaseName = "shorturl";
                     options.Collection = new Collection()
                     {
-                        CollectionName = "ExpiredShortUrl",
+                        CollectionName = "expired-shorturl",
                         ReserveUnits = 400
                     };
 

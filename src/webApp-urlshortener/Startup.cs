@@ -90,10 +90,10 @@ namespace webApp_urlshortener
             {
                 options.EndPointUrl = cosmosEndpointUri;
                 options.PrimaryKey = primaryKey;
-                options.DatabaseName = "ShortUrlDatabase";
+                options.DatabaseName = "shorturl";
                 options.Collection = new Collection()
                 {
-                    CollectionName = "ShortUrl",
+                    CollectionName = "shorturl",
                     ReserveUnits = 400
                 };
 
@@ -102,10 +102,10 @@ namespace webApp_urlshortener
             {
                 options.EndPointUrl = cosmosEndpointUri;
                 options.PrimaryKey = primaryKey;
-                options.DatabaseName = "ShortUrlDatabase";
+                options.DatabaseName = "shorturl";
                 options.Collection = new Collection()
                 {
-                    CollectionName = "ExpiredShortUrl",
+                    CollectionName = "expired-shorturl",
                     ReserveUnits = 400
                 };
 

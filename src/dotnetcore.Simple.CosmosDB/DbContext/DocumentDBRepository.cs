@@ -7,6 +7,7 @@ using CosmosDB.Simple.Store.Abstracts;
 using CosmosDB.Simple.Store.Configuration;
 using CosmosDB.Simple.Store.Interfaces;
 using dotnetcore.urlshortener.Utils;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -37,7 +38,7 @@ namespace CosmosDB.Simple.Store.DbContext
             _documentCollectionUri =
                 UriFactory.CreateDocumentCollectionUri(Database.Id, Configuration.Collection.CollectionName);
             Logger?.LogDebug($"Persisted Grants URI: {_documentCollectionUri}");
-            await CreateCollectionIfNotExistsAsync();
+            await CreateContainerIfNotExistsAsync();
 
         }
 
@@ -81,10 +82,20 @@ namespace CosmosDB.Simple.Store.DbContext
             await DocumentClient.DeleteDocumentAsync(item.SelfLink);
         }
 
-        private async Task CreateCollectionIfNotExistsAsync()
+        private async Task CreateContainerIfNotExistsAsync()
         {
             try
             {
+                // Create new container
+                var containerProperties = new ContainerProperties
+                {
+                    Id = Configuration.Collection.CollectionName,
+                    PartitionKeyPath = "/id",
+                    DefaultTimeToLive = -1
+                };
+
+                await DatabaseV3.CreateContainerIfNotExistsAsync(containerProperties);
+
                 await DocumentClient.ReadDocumentCollectionAsync(_documentCollectionUri);
             }
             catch (DocumentClientException e)
@@ -94,7 +105,10 @@ namespace CosmosDB.Simple.Store.DbContext
                     await DocumentClient.CreateDocumentCollectionAsync(
                         DatabaseUri,
                         new DocumentCollection { Id = Configuration.Collection.CollectionName },
-                        new RequestOptions { OfferThroughput = Configuration.Collection.ReserveUnits });
+                        new Microsoft.Azure.Documents.Client.RequestOptions
+                        { 
+                            OfferThroughput = Configuration.Collection.ReserveUnits,
+                        });
                 }
                 else
                 {
