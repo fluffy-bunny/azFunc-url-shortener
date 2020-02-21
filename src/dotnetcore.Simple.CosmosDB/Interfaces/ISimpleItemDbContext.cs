@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Documents;
+﻿using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace CosmosDB.Simple.Store.Interfaces
         Task<T> GetItemAsync(string id);
         Task<IEnumerable<T>> GetItemsAsync(Expression<Func<T, bool>> predicate);
         Task<Document> UpsertItemAsync(T item);
-
+        Task<ItemResponse<T>> UpsertItemV3Async(T item);
         Task<Document> ReplaceItemAsync(string id, T item);
         Task DeleteItemAsync(string id);
         DocumentClient DocumentClient { get; }

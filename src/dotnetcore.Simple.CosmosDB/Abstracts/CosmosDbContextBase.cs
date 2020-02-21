@@ -8,6 +8,7 @@ using CosmosDB.Simple.Store.Configuration;
 using CosmosDB.Simple.Store.Extensions;
 using dotnetcore.urlshortener.Utils;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Logging;
@@ -51,15 +52,16 @@ namespace CosmosDB.Simple.Store.Abstracts
             Configuration = settings.Value;
 
             var serviceEndPoint = new Uri(settings.Value.EndPointUrl);
-            CosmosClient = new CosmosClient(serviceEndPoint.AbsoluteUri, settings.Value.PrimaryKey);
 
+            CosmosClientBuilder configurationBuilder = new CosmosClientBuilder(serviceEndPoint.AbsoluteUri, settings.Value.PrimaryKey);
+            CosmosClient = configurationBuilder.Build();
             DocumentClient = new DocumentClient(serviceEndPoint, settings.Value.PrimaryKey,
                 connectionPolicy ?? ConnectionPolicy.Default);
 
             EnsureDatabaseCreated(Configuration.DatabaseName).Wait();
         }
 
-       
+
 
         /// <summary>
         ///     CosmosDb Document Client.

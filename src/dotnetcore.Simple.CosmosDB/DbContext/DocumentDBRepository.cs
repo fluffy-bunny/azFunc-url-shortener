@@ -62,6 +62,13 @@ namespace CosmosDB.Simple.Store.DbContext
             }
         }
 
+        public async Task<ItemResponse<T>> UpsertItemV3Async(T item)
+        {
+            var container = CosmosClient.GetContainer(Database.Id, Configuration.Collection.CollectionName);
+            var response = await container.UpsertItemAsync(item);
+            return response;
+        }
+
         public async Task<Document> UpsertItemAsync(T item)
         {
             return await DocumentClient.UpsertDocumentAsync(_documentCollectionUri, item);
@@ -106,7 +113,7 @@ namespace CosmosDB.Simple.Store.DbContext
                         DatabaseUri,
                         new DocumentCollection { Id = Configuration.Collection.CollectionName },
                         new Microsoft.Azure.Documents.Client.RequestOptions
-                        { 
+                        {
                             OfferThroughput = Configuration.Collection.ReserveUnits,
                         });
                 }
