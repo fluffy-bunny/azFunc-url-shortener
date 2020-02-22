@@ -9,6 +9,7 @@ using dotnetcore.urlshortener.contracts;
 using dotnetcore.urlshortener.contracts.Models;
 using dotnetcore.urlshortener.generator.Extensions;
 using dotnetcore.urlshortener.Utils;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 
@@ -93,15 +94,31 @@ namespace dotnetcore.urlshortener.CosmosDBStore
             await _simpleItemDbContext.DeleteItemAsync(id);
         }
 
+        async Task<TDoc> GetOneAsync<TDoc>(QueryDefinition query, PartitionKey partitionKey)
+        {
+            List<TDoc> results = new List<TDoc>();
+            FeedIterator<TDoc> resultSetIterator = _simpleItemDbContext.Container.GetItemQueryIterator<TDoc>(query,
+                requestOptions: new QueryRequestOptions() { PartitionKey = partitionKey });
+            while (resultSetIterator.HasMoreResults)
+            {
+                Microsoft.Azure.Cosmos.FeedResponse<TDoc> response = await resultSetIterator.ReadNextAsync();
+                results.AddRange(response);
+                if (response.Diagnostics != null)
+                {
+                    Console.WriteLine($"\nQueryWithSqlParameters Diagnostics: {response.Diagnostics.ToString()}");
+                }
+                break;
+            }
+            var item = (TDoc)results.FirstOrDefault();
+            return item;
+        }
         public async Task<ShortUrl> GetShortUrlAsync(string id, string tenant)
         {
-            var items = await _simpleItemDbContext.GetItemsAsync(so => so.Tenant == tenant && so.Id == id);
-            var item = items.FirstOrDefault();
-            if (item == null)
-            {
-                return null;
-            }
-            return item.ToShortUrl();
+            QueryDefinition query = new QueryDefinition("SELECT * FROM ShortUrls f WHERE f.id = @id AND f.tenant = @tenant")
+               .WithParameter("@id", id)
+               .WithParameter("@tenant", tenant);
+            var doc = await GetOneAsync<ShortUrlCosmosDocumentBase>(query, new PartitionKey(id));
+            return doc.ToShortUrl();
         }
 
         public async Task RemoveShortUrlAsync(string id, string tenant)

@@ -19,5 +19,6 @@ namespace CosmosDB.Simple.Store.Interfaces
         Task DeleteItemAsync(string id);
         DocumentClient DocumentClient { get; }
         Uri DocumentCollectionUri { get; }
+        Container Container { get; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using dotnetcore.Simple.CosmosDB.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -46,7 +47,7 @@ namespace dotnetcore.urlshortener.contracts.Models
         }
     }
 
-    public class ShortUrlCosmosDocumentBase
+    public class ShortUrlCosmosDocumentBase: BaseItem
     {
         public ShortUrlCosmosDocumentBase() { }
         public ShortUrlCosmosDocumentBase(ShortUrlCosmosDocumentBase other)
@@ -58,8 +59,7 @@ namespace dotnetcore.urlshortener.contracts.Models
             ttl = other.ttl;
         }
 
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
+       
 
         [JsonProperty(PropertyName = "tenant")]
         public string Tenant { get; set; }
