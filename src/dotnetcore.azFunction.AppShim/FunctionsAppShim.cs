@@ -33,6 +33,7 @@ namespace dotnetcore.azFunction.AppShim
                          config.SetBasePath(context.FunctionAppDirectory);
                          LoadConfigurationsDelegate(config, environmentName);
                          config.AddEnvironmentVariables();
+                         config.AddUserSecrets<TStartup>();
                      });
                  })
                  .ConfigureServices((context, services) =>

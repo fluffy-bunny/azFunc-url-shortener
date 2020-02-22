@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using dotnetcore.urlshortener.contracts;
 using Microsoft.Extensions.Configuration;
@@ -39,7 +40,7 @@ namespace dotnetcore.urlshortener.InMemoryStore
             return null;
         }
 
-        public Task<ShortUrl> UpsertShortUrlAsync(ShortUrl shortUrl)
+        public Task<(HttpStatusCode, ShortUrl)> UpsertShortUrlAsync(ShortUrl shortUrl)
         {
             throw new NotImplementedException();
         }

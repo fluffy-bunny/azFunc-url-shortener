@@ -12,7 +12,7 @@ namespace azFunc_urlshortener
             builder.Services.AddHttpClient();
             var functionsAppShim = new FunctionsAppShim<webApp_urlshortener.Startup>
             {
-                LoadConfigurationsDelegate = webApp_urlshortener.Program.LoadConfigurations,
+                LoadConfigurationsDelegate = webApp_urlshortener.Program.LoadConfigurations
             };
             builder.Services.AddSingleton<IFunctionsAppShim>(functionsAppShim);
         }

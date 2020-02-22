@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using dotnetcore.urlshortener.contracts;
 using dotnetcore.urlshortener.Utils;
@@ -16,7 +17,7 @@ namespace dotnetcore.urlshortener.InMemoryStore
             _urlShortenerAlgorithm = urlShortenerAlgorithm;
             _database = new Dictionary<string, ShortUrl>();
         }
-        public async Task<ShortUrl> UpsertShortUrlAsync(ShortUrl shortUrl)
+        public async Task<(HttpStatusCode, ShortUrl)> UpsertShortUrlAsync(ShortUrl shortUrl)
         {
             Guard.ArgumentNotNull(nameof(shortUrl), shortUrl);
             Guard.ArgumentNotNullOrEmpty(nameof(shortUrl.LongUrl), shortUrl.LongUrl);
@@ -24,7 +25,7 @@ namespace dotnetcore.urlshortener.InMemoryStore
 
             shortUrl.Id = _urlShortenerAlgorithm.GenerateUniqueId();
             _database.Add(shortUrl.Id, shortUrl);
-            return shortUrl;
+            return (HttpStatusCode.OK,shortUrl);
         }
 
         public async Task<ShortUrl> GetShortUrlAsync(string id)

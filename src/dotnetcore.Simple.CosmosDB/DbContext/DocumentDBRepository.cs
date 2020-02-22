@@ -69,11 +69,6 @@ namespace CosmosDB.Simple.Store.DbContext
             return response;
         }
 
-        public async Task<Document> UpsertItemAsync(T item)
-        {
-            return await DocumentClient.UpsertDocumentAsync(_documentCollectionUri, item);
-        }
-
         public async Task<Document> ReplaceItemAsync(string id, T item)
         {
             return await DocumentClient.ReplaceDocumentAsync(_documentCollectionUri, item);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using dotnetcore.urlshortener.contracts;
 using Microsoft.AspNetCore.Mvc;
@@ -48,9 +49,16 @@ namespace UrlShortenerApp.Pages
                 Expiration = DateTime.UtcNow.AddMinutes(2)
             };
 
-            shortUrl = await _urlShortenerService.UpsertShortUrlAsync("1",shortUrl);
-
-            this.ShortUrl = $"{Request.Scheme}://{Request.Host}/s/{shortUrl.Id}";
+            HttpStatusCode code = HttpStatusCode.BadRequest;
+            (code, shortUrl) = await _urlShortenerService.UpsertShortUrlAsync("1", shortUrl);
+            if(code == HttpStatusCode.OK)
+            {
+                this.ShortUrl = $"{Request.Scheme}://{Request.Host}/s/{shortUrl.Id}";
+            }
+            else
+            {
+                this.ShortUrl = $"Error:{code}";
+            }
 
             return Page();
         }

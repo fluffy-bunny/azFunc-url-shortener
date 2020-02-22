@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using webApp_urlshortener.Extensions;
 using System.Linq;
+using System.Net;
 
 namespace webApp_urlshortener.Controllers
 {
@@ -19,7 +20,7 @@ namespace webApp_urlshortener.Controllers
     }
 
     [ApiController]
-    [Route("short-url-service")]
+    [Route("api/short-url-service")]
     [Authorize]
     public class ShortUrlController : ControllerBase
     {
@@ -117,12 +118,13 @@ namespace webApp_urlshortener.Controllers
                     Tenant = tenant,
                     Expiration = DateTime.UtcNow.AddSeconds((double)shortUrlRequest.ttl)
                 };
-                shortUrl = await _urlShortenerService.UpsertShortUrlAsync(shortUrlRequest.ExpiredKey,
+                HttpStatusCode code = HttpStatusCode.BadRequest;
+                (code,shortUrl) = await _urlShortenerService.UpsertShortUrlAsync(shortUrlRequest.ExpiredKey,
                     shortUrl);
 
                 var jsonResult = new JsonResult(shortUrl)
                 {
-                    StatusCode = StatusCodes.Status200OK
+                    StatusCode = (int)code
                 };
                 return jsonResult;
             }

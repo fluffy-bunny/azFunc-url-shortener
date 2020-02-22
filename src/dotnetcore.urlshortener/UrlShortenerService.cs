@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using dotnetcore.urlshortener.contracts;
@@ -33,12 +34,16 @@ namespace dotnetcore.urlshortener
             _expiredUrlShortenerOperationalStore = expiredUrlShortenerOperationalStore;
             _eventSource = new EventSource<ShortenerEventArgs>();
         }
-        public async Task<ShortUrl> UpsertShortUrlAsync(string expiredKey, ShortUrl shortUrl)
+        public async Task<(HttpStatusCode, ShortUrl)> UpsertShortUrlAsync(string expiredKey, ShortUrl shortUrl)
         {
             Guard.ArgumentNotNull(nameof(shortUrl), shortUrl);
             Guard.ArgumentNotNull(nameof(expiredKey), expiredKey);
 
-            var record = await _urlShortenerOperationalStore.UpsertShortUrlAsync(shortUrl);
+            var (code,record) = await _urlShortenerOperationalStore.UpsertShortUrlAsync(shortUrl);
+            if (!code.IsSuccess())
+            {
+                return (code, record);
+            }
             record.Id = $"{expiredKey}.{record.Id}";
 
             _eventSource.FireEvent(new ShortenerEventArgs()
@@ -47,7 +52,7 @@ namespace dotnetcore.urlshortener
                 EventType = ShortenerEventType.Upsert,
                 UtcDateTime = DateTime.UtcNow
             });
-            return record;
+            return (code, record);
         }
 
         public async Task<ShortUrl> GetShortUrlAsync(string id)

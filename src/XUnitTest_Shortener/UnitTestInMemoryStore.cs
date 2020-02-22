@@ -5,6 +5,7 @@ using dotnetcore.urlshortener.generator;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -49,12 +50,13 @@ namespace XUnitTest_Shortener
             ShortenerEventArgs evt = null;
             var myHandler = new MyHandler();
             store.AddListenter(myHandler.OnEvent);
-            var shortUrl = await store.UpsertShortUrlAsync("1",new ShortUrl()
+            var (code,shortUrl) = await store.UpsertShortUrlAsync("1",new ShortUrl()
             {
                 LongUrl = url,
                 Expiration = DateTime.UtcNow.AddSeconds(2)
 
             });
+            code.Should().Be(HttpStatusCode.OK);
 
             myHandler.Evt.Should().NotBeNull();
             myHandler.Evt.EventType.Should().Be(ShortenerEventType.Upsert);

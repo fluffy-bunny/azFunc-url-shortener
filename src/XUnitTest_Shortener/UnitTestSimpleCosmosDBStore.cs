@@ -3,6 +3,7 @@ using dotnetcore.urlshortener.contracts;
 using dotnetcore.urlshortener.contracts.Models;
 using FluentAssertions;
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -37,7 +38,8 @@ namespace XUnitTest_Shortener
                 LongUrl = "https://www.google.com"
             };
             var document = new ShortUrlCosmosDocument(shortUrl.ToShortUrlCosmosDocument());
-            await store.UpsertItemAsync(document);
+            var response = await store.UpsertItemV3Async(document);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
             var read = await store.GetItemAsync(document.Id);
 
             read.Should().NotBeNull();

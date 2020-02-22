@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CosmosDB.Simple.Store.Interfaces;
@@ -59,7 +60,7 @@ namespace dotnetcore.urlshortener.CosmosDBStore
             _simpleItemDbContext = simpleItemDbContext;
 
         }
-        public async Task<ShortUrl> UpsertShortUrlAsync(ShortUrl shortUrl)
+        public async Task<(HttpStatusCode, ShortUrl)> UpsertShortUrlAsync(ShortUrl shortUrl)
         {
             Guard.ArgumentNotNull(nameof(shortUrl), shortUrl);
             Guard.ArgumentNotNullOrEmpty(nameof(shortUrl.LongUrl), shortUrl.LongUrl);
@@ -72,8 +73,8 @@ namespace dotnetcore.urlshortener.CosmosDBStore
             var document = CreateDocument(shortUrl.ToShortUrlCosmosDocument());
 
             // var document = new ShortUrlCosmosDocument(shortUrl.ToShortUrlCosmosDocument());
-            await _simpleItemDbContext.UpsertItemAsync(document);
-            return shortUrl;
+            var response = await _simpleItemDbContext.UpsertItemV3Async(document);
+            return (response.StatusCode,shortUrl);
         }
 
         public abstract T CreateDocument(ShortUrlCosmosDocumentBase shortUrlCosmosDocumentBase);
