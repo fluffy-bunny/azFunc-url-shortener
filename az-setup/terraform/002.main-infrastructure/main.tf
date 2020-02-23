@@ -111,6 +111,7 @@ resource "azurerm_function_app" "azfunc_shorturl" {
     "azFunc-shorturl-cosmos-primary-connection-string"  = var.azFunc_shorturl_cosmos_primary_connection_string,
     "azFunc-shorturl-cosmos-primarykey"                 = var.azFunc_shorturl_cosmos_primarykey,
     "azFunc-shorturl-cosmos-uri"                        = var.azFunc_shorturl_cosmos_uri,
+    "azFunc-shorturl-client-credentials"                = var.azFunc_shorturl_client_credentials,
     "jwt-validate-settings"                             = var.jwt_validate_settings,
     "FUNCTIONS_WORKER_RUNTIME"                          = "dotnet"
   }
