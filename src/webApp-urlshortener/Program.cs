@@ -22,7 +22,6 @@ namespace webApp_urlshortener
                 {
                     var environmentName = hostingContext.HostingEnvironment.EnvironmentName;
                     LoadConfigurations(config, environmentName);
-                    config.AddEnvironmentVariables();
                     config.AddUserSecrets<Startup>();
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
@@ -35,6 +34,7 @@ namespace webApp_urlshortener
             config
                 .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true);
+            config.AddEnvironmentVariables();
         }
     }
 }

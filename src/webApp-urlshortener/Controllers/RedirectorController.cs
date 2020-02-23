@@ -17,7 +17,7 @@ namespace webApp_urlshortener.Controllers
 {
 
 
-    [Route("Redirector")]
+    [Route("api/Redirector")]
     public class RedirectorController : ControllerBase
     {
         private IHttpClientFactory _httpClientFactory;

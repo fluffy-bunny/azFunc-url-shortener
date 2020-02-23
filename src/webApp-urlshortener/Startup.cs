@@ -54,14 +54,22 @@ namespace webApp_urlshortener
             Configuration = configuration;
             _env = env;
         }
-
+        string SafeFetchSettings(string key)
+        {
+            string value = Environment.GetEnvironmentVariable(key);
+            if (string.IsNullOrEmpty(value))
+            {
+                value = Configuration[key];
+            }
+            return value;
+        }
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient();
 
             services.AddControllers();
-            var jwt_validate_settings = Configuration["jwt-validate-settings"];
+            var jwt_validate_settings = SafeFetchSettings("jwt-validate-settings");
             jwt_validate_settings = Base64Decode(jwt_validate_settings);
 
             var authenictation = JsonConvert.DeserializeObject<Authentication>(jwt_validate_settings);
@@ -82,22 +90,22 @@ namespace webApp_urlshortener
 
             // wellknown CosmosDB emulator for local development
 
-            string primaryKey = Environment.GetEnvironmentVariable("azFunc-shorturl-cosmos-primarykey");
-            string cosmosEndpointUri = Environment.GetEnvironmentVariable("azFunc-shorturl-cosmos-uri");
+            string primaryKey = SafeFetchSettings("azFunc-shorturl-cosmos-primarykey");
+            string cosmosEndpointUri = SafeFetchSettings("azFunc-shorturl-cosmos-uri");
             primaryKey = primaryKey ?? "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
             cosmosEndpointUri = cosmosEndpointUri ?? "https://localhost:8081";
 
             TenantConfiguration tenantConfiguration = null;
             try
             {
-                var creds = Base64Decode(Environment.GetEnvironmentVariable("azFunc-shorturl-client-credentials"));
+                var creds = Base64Decode(SafeFetchSettings("azFunc-shorturl-client-credentials"));
                 tenantConfiguration = JsonConvert.DeserializeObject<TenantConfiguration>(creds);
             }
             catch (Exception e)
             {
                 tenantConfiguration = null;
             }
-            string settingString = Configuration["keyvault-config"];
+            string settingString = SafeFetchSettings("keyvault-config");
             settingString = Base64Decode(settingString);
             var keyVaultConfiguration = JsonConvert.DeserializeObject<KeyVaultConfiguration>(settingString);
 

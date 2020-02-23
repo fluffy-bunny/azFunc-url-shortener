@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace webApp_urlshortener.Controllers
 {
-    [Route("identity")]
+    [Route("api/identity")]
     [Authorize]
     public class IdentityController : ControllerBase
     {

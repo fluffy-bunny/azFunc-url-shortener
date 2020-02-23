@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace webApp_urlshortener.Controllers
 {
     [ApiController]
-    [Route("status")]
+    [Route("api/status")]
     public class StatusController : ControllerBase
     {
         private readonly ILogger<StatusController> _logger;

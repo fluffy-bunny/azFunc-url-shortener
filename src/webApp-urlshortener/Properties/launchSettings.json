@@ -20,7 +20,7 @@
     "webApp_urlshortener": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "status",
+      "launchUrl": "api/status",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

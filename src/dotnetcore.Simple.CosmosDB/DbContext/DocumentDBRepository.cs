@@ -42,8 +42,8 @@ namespace CosmosDB.Simple.Store.DbContext
 
         public DocumentDBRepository(
             IOptions<CosmosDbConfiguration<T>> settings,
-            ConnectionPolicy connectionPolicy,
-            ILogger<DocumentDBRepository<T>> logger) :
+            ConnectionPolicy connectionPolicy = null,
+            ILogger<DocumentDBRepository<T>> logger = null) :
             base(settings, connectionPolicy, logger)
         {
             _logger = logger;
