@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using dotnetcore.azFunction.AppShim;
+using webApp_urlshortener;
 
 namespace azFunc_urlshortener
 {
@@ -23,6 +24,7 @@ namespace azFunc_urlshortener
             ILogger logger)
         {
             logger.LogInformation("C# HTTP trigger function processed a request.");
+            StartupGlobals.ExternalShimLogger = logger;
             return await _functionsAppShim.Run(context, request, logger);
         }
     }

@@ -19,8 +19,8 @@ variable "azFunc_shorturl_cosmos_primary_connection_string" {
   description = "(Required) azFunc_shorturl_cosmos_primary_connection_string."
   type        = string
 }
-variable "azFunc_shorturl_client_credentials" {
-  description = "(Required) azFunc_shorturl_client_credentials."
+variable "keyvault_config" {
+  description = "(Required) The base64 keyvault_config."
   type        = string
 }
 variable "azFunc_shorturl_cosmos_primarykey" {
