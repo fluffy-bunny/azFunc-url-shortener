@@ -38,7 +38,7 @@ namespace XUnitTest_Shortener
                 LongUrl = "https://www.google.com"
             };
             var document = new ShortUrlCosmosDocument(shortUrl.ToShortUrlCosmosDocument());
-            var response = await store.UpsertItemV3Async(document);
+            var response = await store.UpsertItemAsync(document);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             var read = await store.GetItemAsync(document.Id);
 

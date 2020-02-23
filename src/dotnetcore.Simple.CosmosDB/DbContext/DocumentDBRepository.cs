@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -15,41 +14,19 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace CosmosDB.Simple.Store.DbContext
 {
-    internal static class StreamExtensions 
+
+    public class DocumentDBRepository<T> : 
+        CosmosDbContextBase<T>, 
+        ISimpleItemDbContext<T> 
+        where T : BaseItem
     {
-        private static readonly JsonSerializer Serializer = new JsonSerializer();
-        public static T FromStream<T>(this Stream stream)
-        {
-            using (stream)
-            {
-                if (typeof(Stream).IsAssignableFrom(typeof(T)))
-                {
-                    return (T)(object)(stream);
-                }
-
-                using (StreamReader sr = new StreamReader(stream))
-                {
-                    using (JsonTextReader jsonTextReader = new JsonTextReader(sr))
-                    {
-                        return Serializer.Deserialize<T>(jsonTextReader);
-                    }
-                }
-            }
-        }
-    }
-
-    public class DocumentDBRepository<T> : CosmosDbContextBase<T>, ISimpleItemDbContext<T> where T : BaseItem
-    {
-
-
-        private Uri _documentCollectionUri;
-
-        public Uri DocumentCollectionUri => _documentCollectionUri;
+        public Uri DocumentCollectionUri { get; private set; }
         private Container _container;
+        private ILogger<DocumentDBRepository<T>> _logger;
+
         public Container Container
         {
             get
@@ -65,19 +42,20 @@ namespace CosmosDB.Simple.Store.DbContext
 
         public DocumentDBRepository(
             IOptions<CosmosDbConfiguration<T>> settings,
-            ConnectionPolicy connectionPolicy = null,
-            ILogger<DocumentDBRepository<T>> logger = null) :
+            ConnectionPolicy connectionPolicy,
+            ILogger<DocumentDBRepository<T>> logger) :
             base(settings, connectionPolicy, logger)
         {
+            _logger = logger;
             Guard.ForNullOrDefault(settings.Value, nameof(settings));
             
             SetupAsync().Wait();
         }
         private async Task SetupAsync()
         {
-            _documentCollectionUri =
+            DocumentCollectionUri =
                 UriFactory.CreateDocumentCollectionUri(Database.Id, Configuration.Collection.CollectionName);
-            Logger?.LogDebug($"Persisted Grants URI: {_documentCollectionUri}");
+            Logger?.LogDebug($"Persisted Grants URI: {DocumentCollectionUri}");
             await CreateContainerIfNotExistsAsync();
 
         }
@@ -107,7 +85,7 @@ namespace CosmosDB.Simple.Store.DbContext
                         }
                         else
                         {
-                            //                            Console.WriteLine($"Read item from stream failed. Status code: {responseMessage.StatusCode} Message: {responseMessage.ErrorMessage}");
+                            _logger.LogError($"Read item from stream failed. Status code: {responseMessage.StatusCode} Message: {responseMessage.ErrorMessage}");
                         }
                     }
 
@@ -133,7 +111,7 @@ namespace CosmosDB.Simple.Store.DbContext
             }
         }
          
-        public async Task<ItemResponse<T>> UpsertItemV3Async(T item)
+        public async Task<ItemResponse<T>> UpsertItemAsync(T item)
         {
             var response = await Container.UpsertItemAsync(item, new Microsoft.Azure.Cosmos.PartitionKey(item.Id));
             return response;
@@ -141,12 +119,12 @@ namespace CosmosDB.Simple.Store.DbContext
 
         public async Task<Document> ReplaceItemAsync(string id, T item)
         {
-            return await DocumentClient.ReplaceDocumentAsync(_documentCollectionUri, item);
+            return await DocumentClient.ReplaceDocumentAsync(DocumentCollectionUri, item);
         }
 
         public async Task DeleteItemAsync(string id)
         {
-            var item = DocumentClient.CreateDocumentQuery(_documentCollectionUri)
+            var item = DocumentClient.CreateDocumentQuery(DocumentCollectionUri)
                     .Where(d => d.Id == id)
                     .AsEnumerable()
                     .FirstOrDefault();
@@ -168,7 +146,7 @@ namespace CosmosDB.Simple.Store.DbContext
 
                 await DatabaseV3.CreateContainerIfNotExistsAsync(containerProperties);
 
-                await DocumentClient.ReadDocumentCollectionAsync(_documentCollectionUri);
+                await DocumentClient.ReadDocumentCollectionAsync(DocumentCollectionUri);
             }
             catch (DocumentClientException e)
             {
@@ -187,18 +165,6 @@ namespace CosmosDB.Simple.Store.DbContext
                     throw;
                 }
             }
-        }
-
-        public async Task<IEnumerable<T>> GetItemsAsync(Expression<Func<T, bool>> predicate)
-        {
-           
-            var items = DocumentClient
-                .CreateDocumentQuery<T>(
-                DocumentCollectionUri)
-                .Where(predicate)
-                .AsEnumerable();
-            return items;
-
         }
        
     }
