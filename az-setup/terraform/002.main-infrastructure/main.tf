@@ -149,7 +149,7 @@ data "azurerm_role_definition" "Azure_Event_Hubs_Data_Owner" {
 
 
 resource "azurerm_role_assignment" "evh_data_owner_azfun" {
-  name               = "0db158bd-d0b4-42d3-b97a-20bbf6e47591"
+  name               = var.role_assignment_evh_data_owner_azfun_name
   scope              = azurerm_eventhub_namespace.evt_namespace_shorturl.id
   role_definition_id = data.azurerm_role_definition.Azure_Event_Hubs_Data_Owner.id
   principal_id       = azurerm_function_app.azfunc_shorturl.identity.0.principal_id

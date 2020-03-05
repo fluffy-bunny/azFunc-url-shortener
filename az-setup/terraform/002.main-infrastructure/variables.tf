@@ -37,6 +37,11 @@ variable "jwt_validate_settings" {
   type        = string
 }
 
+variable "role_assignment_evh_data_owner_azfun_name" {
+  description = "(Required) Unique GUID name of a role assignment."
+  type        = string
+}
+
 variable "tags" {
   description = "Tags to help identify various services."
   type        = map

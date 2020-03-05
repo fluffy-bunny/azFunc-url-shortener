@@ -2,6 +2,7 @@ az_resource_group_location = "eastus2"
 az_resource_group_name = "rg-shorturl"
 az_keyvault_name = "kv-shorturl"
 azFunc_shorturl_name = "azFunc-shorturl"
+role_assignment_evh_data_owner_azfun_name = "0db158bd-d0b4-42d3-b97a-20bbf6e47591"
 
 azFunc_shorturl_cosmos_primary_connection_string    = "@Microsoft.KeyVault(SecretUri=https://kv-shorturl.vault.azure.net/secrets/azFunc-shorturl-cosmos-primary-connection-string/90bdf88a107a43548d9d7c3c3ba30dd9)"
 azFunc_shorturl_cosmos_primarykey                   = "@Microsoft.KeyVault(SecretUri=https://kv-shorturl.vault.azure.net/secrets/azFunc-shorturl-cosmos-primarykey/35c430646a274e9fb9d78c086ceae15c)"
