@@ -1,14 +1,18 @@
-RG_FRIENDLY_NAME="organics"
+RG_FRIENDLY_NAME="shorturl"
 APP_SHORT_URL="shorturl"
 LOCATION="eastus2"
-RESOURCE_GROUP_NAME="rg-$RG_FRIENDLY_NAME-openhack"
-STORAGE_ACCOUNT_NAME="st"$APP_SHORT_URL"eventhub"
+RESOURCE_GROUP_NAME="rg-$RG_FRIENDLY_NAME"
+STORAGE_ACCOUNT_NAME="stazfuncshorturl"
 SKU="Standard_LRS"
 KIND="StorageV2"
 EVENTHUB_NAMESPACE="evhns-$APP_SHORT_URL"
 EVENTHUB_NAME="evh-$APP_SHORT_URL"
 QUEUE_NAME="stq-$APP_SHORT_URL-usage"
-TOPIC_NAME="tenant-usage"
+TOPIC_NAME="tpc-$APP_SHORT_URL-tenant-usage"
+
+echo "LOCATION:$LOCATION"
+echo "TOPIC_NAME:$TOPIC_NAME"
+echo "RESOURCE_GROUP_NAME:$RESOURCE_GROUP_NAME"
 
 az eventgrid topic create --location $LOCATION \
                           --name $TOPIC_NAME \

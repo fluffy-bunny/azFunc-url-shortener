@@ -1,5 +1,5 @@
-TOPIC_NAME="tenant-usage"
-RESOURCE_GROUP="rg-organics-openhack"
+TOPIC_NAME="tpc-shorturl-tenant-usage"
+RESOURCE_GROUP="rg-shorturl"
 
 endpoint=$(az eventgrid topic show --name $TOPIC_NAME -g $RESOURCE_GROUP --query "endpoint" --output tsv)
 echo "endpoint: $endpoint"

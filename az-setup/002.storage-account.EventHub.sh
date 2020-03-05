@@ -1,16 +1,23 @@
 # https://docs.microsoft.com/en-us/azure/event-grid/custom-event-to-queue-storage
 
-RG_FRIENDLY_NAME="organics"
+RG_FRIENDLY_NAME="shorturl"
 APP_SHORT_URL="shorturl"
 LOCATION="eastus2"
-RESOURCE_GROUP_NAME="rg-$RG_FRIENDLY_NAME-openhack"
-STORAGE_ACCOUNT_NAME="st"$APP_SHORT_URL"eventhub"
+RESOURCE_GROUP_NAME="rg-$RG_FRIENDLY_NAME"
+STORAGE_ACCOUNT_NAME="stazfuncshorturl"
 SKU="Standard_LRS"
 KIND="StorageV2"
-EVENTHUB_NAMESPACE="evhns-$APP_SHORT_URL"
+EVENTHUB_NAMESPACE="evhns-$APP_SHORT_URL-001"
 EVENTHUB_NAME="evh-$APP_SHORT_URL"
 QUEUE_NAME="stq-$APP_SHORT_URL-usage"
 
+echo RESOURCE_GROUP_NAME: $RESOURCE_GROUP_NAME
+echo STORAGE_ACCOUNT_NAME: $STORAGE_ACCOUNT_NAME
+
+echo QUEUE_NAME: $QUEUE_NAME
+
+
+if [ 1 -eq 0 ]; then
 echo "=== Create Storage Account: $STORAGE_ACCOUNT_NAME in ResourceGroup $RESOURCE_GROUP_NAME at Location $LOCATION ==="
 az storage account create \
     -n $STORAGE_ACCOUNT_NAME \
@@ -20,6 +27,7 @@ az storage account create \
     --kind $KIND \
     --access-tier Hot  
 az storage queue create --name $QUEUE_NAME --account-name $STORAGE_ACCOUNT_NAME
+
 
 AZURE_STORAGE_ACCESS_KEY="$(az storage account keys list \
                                 --account-name $STORAGE_ACCOUNT_NAME \
@@ -36,7 +44,7 @@ az storage container create \
     --account-name $STORAGE_ACCOUNT_NAME \
     --account-key $AZURE_STORAGE_ACCESS_KEY  
 
-
+fi
 echo EVENTHUB_NAMESPACE: $EVENTHUB_NAMESPACE
 echo EVENTHUB_NAME: $EVENTHUB_NAME
 

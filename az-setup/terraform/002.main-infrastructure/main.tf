@@ -21,6 +21,7 @@ resource "random_string" "suffix" {
 locals {
   resource_suffix              = random_string.suffix.result
 }
+data "azurerm_subscription" "primary" {}
 
 resource "azurerm_resource_group" "rg" {
   name     = var.az_resource_group_name
@@ -121,6 +122,38 @@ resource "azurerm_function_app" "azfunc_shorturl" {
 
 }
 
+resource "azurerm_eventhub_namespace" "evt_namespace_shorturl" {
+  name                = "evhns-shorturl-001"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = "Standard"
+  capacity            = 1
+
+  tags = {
+    environment = "Production"
+  }
+}
+resource "azurerm_eventhub" "evh_shorturl" {
+  name                = "evh-shorturl"
+  namespace_name      = azurerm_eventhub_namespace.evt_namespace_shorturl.name
+  resource_group_name = azurerm_resource_group.rg.name
+  partition_count     = 2
+  message_retention   = 1
+}
+data "azurerm_role_definition" "contributor" {
+  name = "Contributor"
+}
+data "azurerm_role_definition" "Azure_Event_Hubs_Data_Owner" {
+  name = "Azure Event Hubs Data Owner"
+}
+
+
+resource "azurerm_role_assignment" "evh_data_owner_azfun" {
+  name               = "0db158bd-d0b4-42d3-b97a-20bbf6e47591"
+  scope              = azurerm_eventhub_namespace.evt_namespace_shorturl.id
+  role_definition_id = data.azurerm_role_definition.Azure_Event_Hubs_Data_Owner.id
+  principal_id       = azurerm_function_app.azfunc_shorturl.identity.0.principal_id
+}
 
 
 module "key_vault" {
