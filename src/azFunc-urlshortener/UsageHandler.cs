@@ -22,6 +22,7 @@ namespace azFunc_urlshortener
           [EventGridTrigger]EventGridEvent eventGridEvent,
           ILogger log)
         {
+            //  eventGridEvent.
             log.LogInformation(eventGridEvent.Data.ToString());
         }
     }

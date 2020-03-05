@@ -40,10 +40,7 @@ namespace webApp_urlshortener
         [JsonProperty("secretName")]
         public string SecretName { get; set; }
     }
-    public static class StartupGlobals
-    {
-        public static ILogger ExternalShimLogger { get; set; }
-    }
+
     public class Startup
     {
 
