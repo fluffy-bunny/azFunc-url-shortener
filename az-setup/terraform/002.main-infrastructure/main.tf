@@ -147,6 +147,15 @@ data "azurerm_role_definition" "Azure_Event_Hubs_Data_Owner" {
   name = "Azure Event Hubs Data Owner"
 }
 
+resource "azurerm_eventgrid_topic" "tpc_shorturl_tenant_usage" {
+  name                = "tpc-shorturl-tenant-usage"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  tags = {
+    environment = "Production"
+  }
+}
 
 resource "azurerm_role_assignment" "evh_data_owner_azfun" {
   name               = var.role_assignment_evh_data_owner_azfun_name
