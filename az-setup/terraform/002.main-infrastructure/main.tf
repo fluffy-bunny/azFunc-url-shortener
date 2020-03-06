@@ -88,6 +88,14 @@ resource "azurerm_storage_account" "azfunc_shorturl" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
+
+resource "azurerm_storage_container" "evh_blob" {
+  name                      = "evh-blob"
+  resource_group_name       = azurerm_resource_group.rg.name
+  storage_account_name      = azurerm_storage_account.azfunc_shorturl.name
+  container_access_type     = "private"
+}
+
 resource "azurerm_app_service_plan" "azfunc_consumption" {
   name                = "plan-shorturl"
   location            = azurerm_resource_group.rg.location

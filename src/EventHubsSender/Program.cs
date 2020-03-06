@@ -26,7 +26,6 @@ namespace EventHubsSender
         //Endpoint=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=<secret>
         static async Task<string> GetHelloWorldAsync()
         {
-            var message = $"test-{GuidS}";
             //  await using (EventHubProducerClient producerClient = new EventHubProducerClient("evhns-shorturl-001", "evh-shorturl", new DefaultAzureCredential()))
 
             await using (EventHubProducerClient producerClient = new EventHubProducerClient(ConnectionString, "evh-shorturl"))
@@ -35,14 +34,18 @@ namespace EventHubsSender
                 using (EventDataBatch eventBatch = await producerClient.CreateBatchAsync())
                 {
 
-                    // add events to the batch. only one in this case. 
-                    eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes(message)));
+                    for(int i = 0; i < 10; i++)
+                    {
+                        // add events to the batch. only one in this case. 
+                        eventBatch.TryAdd(new EventData(Encoding.UTF8.GetBytes($"test-{GuidS}")));
+                    }
+               
 
                     // send the batch to the event hub
                     await producerClient.SendAsync(eventBatch);
                 }
             }
-            return $"{DateTime.Now} - SENT{Environment.NewLine}{message}";
+            return $"{DateTime.Now} - SENT{Environment.NewLine}";
         }
     }
 }

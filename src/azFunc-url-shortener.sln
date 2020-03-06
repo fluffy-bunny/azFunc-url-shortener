@@ -37,7 +37,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnetcore.keyvault.fetch",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KeyVaultStores", "KeyVaultStores\KeyVaultStores.csproj", "{BADB27F9-7972-4F13-ADEF-23E4116B1AAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHubsSender", "EventHubsSender\EventHubsSender.csproj", "{60672373-F081-4D2B-AED6-773D08F9EA4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventHubsSender", "EventHubsSender\EventHubsSender.csproj", "{60672373-F081-4D2B-AED6-773D08F9EA4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHubsProcessor_BasicCheckpointing", "EventHubsProcessor_BasicCheckpointing\EventHubsProcessor_BasicCheckpointing.csproj", "{5A58D5E1-0CCF-4821-A31B-86983AB9D752}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,6 +111,10 @@ Global
 		{60672373-F081-4D2B-AED6-773D08F9EA4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60672373-F081-4D2B-AED6-773D08F9EA4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60672373-F081-4D2B-AED6-773D08F9EA4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A58D5E1-0CCF-4821-A31B-86983AB9D752}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A58D5E1-0CCF-4821-A31B-86983AB9D752}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A58D5E1-0CCF-4821-A31B-86983AB9D752}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A58D5E1-0CCF-4821-A31B-86983AB9D752}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,6 +126,7 @@ Global
 		{48E1FF6C-930C-4A67-9929-65FE357CFA1A} = {798F0471-F1B7-4303-877E-D24F9B21C3AA}
 		{E809351F-E104-4502-A28F-529675CF3507} = {798F0471-F1B7-4303-877E-D24F9B21C3AA}
 		{60672373-F081-4D2B-AED6-773D08F9EA4F} = {798F0471-F1B7-4303-877E-D24F9B21C3AA}
+		{5A58D5E1-0CCF-4821-A31B-86983AB9D752} = {798F0471-F1B7-4303-877E-D24F9B21C3AA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F361EDA6-E6D5-4027-9D15-E929594D52C7}
