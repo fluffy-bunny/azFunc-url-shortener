@@ -22,6 +22,18 @@ locals {
   resource_suffix              = random_string.suffix.result
 }
 data "azurerm_subscription" "primary" {}
+data "azurerm_role_definition" "contributor" {
+  name = "Contributor"
+}
+data "azurerm_role_definition" "Azure_Service_Bus_Data_Owner" {
+  name = "Azure Service Bus Data Owner"
+}
+data "azurerm_role_definition" "Azure_Event_Hubs_Data_Owner" {
+  name = "Azure Event Hubs Data Owner"
+}
+data "azurerm_role_definition" "Azure_Storage_Queue_Data_Contributor" {
+  name = "Storage Queue Data Contributor"
+}
 
 resource "azurerm_resource_group" "rg" {
   name     = var.az_resource_group_name
@@ -96,6 +108,11 @@ resource "azurerm_storage_container" "evh_blob" {
   container_access_type     = "private"
 }
 
+resource "azurerm_storage_queue" "shorturl_backend_processing" {
+  name                 = "backend-processing"
+  storage_account_name = azurerm_storage_account.azfunc_shorturl.name
+}
+
 resource "azurerm_app_service_plan" "azfunc_consumption" {
   name                = "plan-shorturl"
   location            = azurerm_resource_group.rg.location
@@ -130,6 +147,34 @@ resource "azurerm_function_app" "azfunc_shorturl" {
 
 }
 
+resource "azurerm_servicebus_namespace" "shorturl" {
+  name                = "sbns-shorturl"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = "Standard"
+
+  tags = {
+    source = "terraform"
+  }
+}
+
+resource "azurerm_servicebus_topic" "shorturl" {
+  name                = "sbtpc-shorturl"
+  resource_group_name = azurerm_resource_group.rg.name
+  namespace_name      = azurerm_servicebus_namespace.shorturl.name
+
+  enable_partitioning = true
+}
+
+resource "azurerm_servicebus_queue" "shorturl" {
+  name                = "sbque-shorturl"
+  resource_group_name = azurerm_resource_group.rg.name
+  namespace_name      = azurerm_servicebus_namespace.shorturl.name
+
+  enable_partitioning = true
+}
+
+
 resource "azurerm_eventhub_namespace" "evt_namespace_shorturl" {
   name                = "evhns-shorturl-001"
   location            = azurerm_resource_group.rg.location
@@ -148,12 +193,7 @@ resource "azurerm_eventhub" "evh_shorturl" {
   partition_count     = 2
   message_retention   = 1
 }
-data "azurerm_role_definition" "contributor" {
-  name = "Contributor"
-}
-data "azurerm_role_definition" "Azure_Event_Hubs_Data_Owner" {
-  name = "Azure Event Hubs Data Owner"
-}
+
 
 resource "azurerm_eventgrid_topic" "tpc_shorturl_tenant_usage" {
   name                = "tpc-shorturl-tenant-usage"
@@ -171,6 +211,21 @@ resource "azurerm_role_assignment" "evh_data_owner_azfun" {
   role_definition_id = data.azurerm_role_definition.Azure_Event_Hubs_Data_Owner.id
   principal_id       = azurerm_function_app.azfunc_shorturl.identity.0.principal_id
 }
+
+resource "azurerm_role_assignment" "sb_data_owner_azfun" {
+  name               = var.role_assignment_sb_data_owner_azfun_name
+  scope              = azurerm_servicebus_namespace.shorturl.id
+  role_definition_id = data.azurerm_role_definition.Azure_Service_Bus_Data_Owner.id
+  principal_id       = azurerm_function_app.azfunc_shorturl.identity.0.principal_id
+}
+
+resource "azurerm_role_assignment" "storage_queue_data_owner_azfun" {
+  name               = var.role_assignment_storage_queue_data_owner_azfun_name
+  scope              = azurerm_storage_account.azfunc_shorturl.id
+  role_definition_id = data.azurerm_role_definition.Azure_Storage_Queue_Data_Contributor.id
+  principal_id       = azurerm_function_app.azfunc_shorturl.identity.0.principal_id
+}
+
 
 
 module "key_vault" {

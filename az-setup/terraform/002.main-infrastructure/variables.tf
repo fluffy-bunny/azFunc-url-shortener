@@ -41,6 +41,17 @@ variable "role_assignment_evh_data_owner_azfun_name" {
   description = "(Required) Unique GUID name of a role assignment."
   type        = string
 }
+variable "role_assignment_sb_data_owner_azfun_name" {
+  description = "(Required) Unique GUID name of a role assignment."
+  type        = string
+}
+variable "role_assignment_storage_queue_data_owner_azfun_name" {
+  description = "(Required) Unique GUID name of a role assignment."
+  type        = string
+}
+
+
+
 
 variable "tags" {
   description = "Tags to help identify various services."
