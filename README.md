@@ -1,3 +1,4 @@
+![fluffy-bunny-banner](https://raw.githubusercontent.com/fluffy-bunny/static-assets/master/fluffy-bunny-banner.png)  
 # azFunc-url-shortener
 
 ## Initialize Terraform for Cloud State
